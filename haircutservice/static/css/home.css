@@ -2,6 +2,10 @@
     padding: 0;
     margin: 0;
 }
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
 .img-fluid{
     position: absolute;
     height:500px;
@@ -18,6 +22,8 @@
  
  
 }
+/* Mobile ke liye (Default: Image choti rahegi) */
+
 .hero-card {
         border: none;
         background: transparent;
