@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal Salon</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg custom-navbar px-4 border border-dark rounded shadow-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand logo-text" href="{% url 'home' %}">Royal Salon</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center">
+          <li class="nav-item mx-2"><a class="nav-link active" href="{% url 'home' %}">Home</a></li>
+          <li class="nav-item mx-2"><a class="nav-link" href="#">Male</a></li>
+          <li class="nav-item mx-2"><a class="nav-link" href="#">Female</a></li>
+          <li class="nav-item mx-2"><a class="nav-link" href="#">Services</a></li>
+          <li class="nav-item mx-2"><a class="nav-link" href="#">Contact</a></li>
+
+          <li class="nav-item mx-2">
+            <a href="#" class="btn btn-outline-warning px-4" data-bs-toggle="modal"
+              data-bs-target="#loginModal">Login</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a href="#" class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#signupModal">Signup</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a href="#" class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#salonModal">Open Dukan</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid p-0">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <!-- Profile ya dukan dekhne ka button -->
+  <a href="{% url 'profile'%}"><img src="https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png" alt="" class="profile"></a>
+
+  <!-- footer section -->
+  <div class="container-fluid bg-dark text-white text-center py-4 mt-5">
+    <h4>Royal Salon</h4>
+    <p>© 2026 All Rights Reserved</p>
+  </div>
+
+
+  <!-- Login Form -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Login to Your Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="name" class="form-label">USer name</label>
+              <input type="text" class="form-control" id="" name="username" required>
+            </div>
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="loginPassword" name="password" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- SignUp Form -->
+  <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="signupModalLabel">Welcome to SignUp</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+            <div class="mb-2"><input type="text" name="name" class="form-control" placeholder="Name" required /></div>
+            <div class="mb-2"><input type="text" name="username" class="form-control" placeholder="Username" required />
+            </div>
+            <div class="mb-2"><input type="number" name="mobile" class="form-control" placeholder="Mobile" required />
+            </div>
+            <div class="mb-2"><input type="password" name="password" class="form-control" placeholder="Password"
+                required /></div>
+            <div class="mb-2"><input type="password" name="conform_password" class="form-control"
+                placeholder="Confirm Password" required /></div>
+            <div class="mb-3">
+              <select name="role" class="form-select">
+                <option value="customer">Customer</option>
+                <option value="shopkeeper">Shopkeeper</option>
+              </select>
+            </div>
+            <div class="d-grid">
+              <button type="submit" onclick="alert('Signup Successfully!')" class="btn btn-primary">Signup</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register salon form  -->
+  <div class="modal fade" id="salonModal" tabindex="-1" aria-labelledby="salonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="salonModalLabel">Register Your Salon</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'opensalon' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-2"><input type="text" name="owner_name" class="form-control"
+                placeholder="Enter Salon Owner Name" /></div>
+            <div class="mb-2"><input type="text" name="salon_name" class="form-control"
+                placeholder="Enter Salon Name" /></div>
+            <div class="mb-2"><textarea name="address" class="form-control" placeholder="Enter Salon Location"
+                maxlength="250"></textarea></div>
+            <div class="mb-2"><label class="form-label">Opening Time:</label><input type="time" name="open_time"
+                class="form-control" /></div>
+            <div class="mb-2"><label class="form-label">Closing Time:</label><input type="time" name="close_time"
+                class="form-control" /></div>
+            <div class="mb-3"><textarea name="description" class="form-control" placeholder="About Salon"></textarea>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Save Salon</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Page load hote hi Login Modal trigger hoga
+      var loginModalElement = document.getElementById('loginModal');
+      var loginModal = new bootstrap.Modal(loginModalElement);
+      loginModal.show();
+    });
+  </script> -->
+
+</body>
+
+</html>

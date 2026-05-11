@@ -1,0 +1,30 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link{
+    color: black !important;
+}
+
+.nav-link:hover{
+    color: red !important;
+}
+.custom-navbar{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: white;
+}
+body{
+    margin-top: 90px;
+}
+.profile {
+    position: fixed; 
+    height: 100px;
+    width: 100px;
+    right: 20px; 
+    bottom: 20px;
+    z-index: 999;
+}

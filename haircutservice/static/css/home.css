@@ -1,0 +1,36 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+.img-fluid{
+    position: absolute;
+    height:500px;
+    width: 450px;
+    z-index:2;
+}
+.squares{
+ position: relative;
+ margin-top: 70px;
+ margin-left: 70px;
+ height: 500px;
+ width: 450px;
+ z-index:1;
+ 
+ 
+}
+.hero-card {
+        border: none;
+        background: transparent;
+        padding-top: 50px;
+}
+.hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #1a1a1a;
+        line-height: 1.2;
+}
+.hero-subtitle {
+        color: #555;
+        font-size: 1.2rem;
+        margin-top: 20px;
+}

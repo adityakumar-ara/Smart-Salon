@@ -1,0 +1,44 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Greeting Section -->
+    <h1 class="ms-5"><b>Hello</b> {{user.name}}!</h1>
+
+    <!-- Main Row -->
+
+    <div class="row align-items-center">
+
+        <!-- Left Side: Image Section (col-md-5) -->
+        <div class="col-12 col-md-5 row justify-content-start">
+
+            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid"/>
+            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares"/>
+
+        </div>
+
+        <!-- Right Side: Content Card (col-md-6) -->
+        <div class="col-12 col-md-6">
+            <div class="hero-card px-3">
+                <h1 class="hero-title fw-bold" style="font-size: 3rem;">
+                    Transform Your Salon <span style="color: #ffc107;">Digitally.</span>
+                </h1>
+                <p class="hero-subtitle lead mt-3">
+                    The ultimate platform for salon owners to launch their "Digital Dukan"
+                    and for customers to join the smart online queue.
+                </p>
+                <div class="mt-4">
+                    <a href="#" class="btn btn-warning btn-lg px-4 me-3 shadow-sm">Register Shop</a>
+                    <a href="#" class="btn btn-outline-dark btn-lg px-4">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
