@@ -8,24 +8,32 @@
 {% block content %}
 <div class="container-fluid mt-4">
     <!-- Greeting Section -->
-    <h1 class="ms-5"><b>Hello</b> {{user.name}}!</h1>
+    <h1 class="ms-md-5 ms-3 mt-3"><b>Hello</b> {{user.name}}!</h1>
 
     <!-- Main Row -->
 
     <div class="row align-items-center">
 
         <!-- Left Side: Image Section (col-md-5) -->
-        <div class="col-12 col-md-5 row justify-content-start">
+         <!-- only for Mobile -->
+        <div class="d-block d-md-none justify-content-start">
 
-            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid"/>
-            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares"/>
+            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid " style="height: 300px; width: 300px;"/>
+            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares" style="height: 300px; width: 300px; margin-top: 50px; margin-left: 50px;"/>
+
+        </div>
+        <!-- Only laptop tab -->
+        <div class="d-none d-md-block col-5 col-md-5 justify-content-start">
+
+            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid " />
+            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares" />
 
         </div>
 
         <!-- Right Side: Content Card (col-md-6) -->
         <div class="col-12 col-md-6">
             <div class="hero-card px-3">
-                <h1 class="hero-title fw-bold" style="font-size: 3rem;">
+                <h1 class="hero-title fw-bold display-5">
                     Transform Your Salon <span style="color: #ffc107;">Digitally.</span>
                 </h1>
                 <p class="hero-subtitle lead mt-3">
