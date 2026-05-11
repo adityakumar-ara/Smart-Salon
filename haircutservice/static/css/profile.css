@@ -1,7 +1,7 @@
 .profile-fixed {
     position: fixed;
-    height: 100px;
-    width: 100px;
+    height: 200px;
+    width: 500px;
     right: 20px; 
     bottom: 20px;
     z-index: 999;
