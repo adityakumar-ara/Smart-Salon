@@ -40,3 +40,26 @@ html, body {
         font-size: 1.2rem;
         margin-top: 20px;
 }
+.hero-title{
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+.hero-btn{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 300px;
+}
+.hero-btn a:nth-child(1){
+    width: 300px;
+   
+}
+@media (min-width: 768px) {
+    .hero-card{
+        margin-top: -250px;
+    }
+    .hero-btn{
+        flex-direction: row;
+        width: 500px;
+        
+    }
+}
