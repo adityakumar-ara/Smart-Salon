@@ -73,3 +73,6 @@ def profile(request):
         'current_user': request.user
     }
     return render(request, 'accounts/profile.html', context)
+
+
+ 
