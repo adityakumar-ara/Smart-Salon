@@ -41,6 +41,8 @@ def opensalon(request):
 
 
 def home(request):
+    
     all_salons = Salon.objects.all()
+    
     context = {'salons': all_salons}
     return render(request, 'home.html', context)

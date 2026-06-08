@@ -6,21 +6,25 @@ html, body {
     overflow-x: hidden;
     max-width: 100%;
 }
-.img-fluid{
-    position: absolute;
-    height:500px;
-    width: 450px;
-    z-index:2;
+.hero-image-box {
+    position: relative;
+    height: 600px; 
 }
-.squares{
- position: relative;
- margin-top: 70px;
- margin-left: 70px;
- height: 500px;
- width: 450px;
- z-index:1;
- 
- 
+.img-fluid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 500px;
+    width: 450px;
+    z-index: 2;
+}
+.squares {
+    position: absolute;
+    top: 70px;
+    left: 70px;
+    height: 500px;
+    width: 450px;
+    z-index: 1;
 }
 /* Mobile ke liye (Default: Image choti rahegi) */
 
@@ -53,6 +57,7 @@ html, body {
     width: 300px;
    
 }
+
 @media (min-width: 768px) {
     .hero-card{
         margin-top: -250px;
@@ -62,4 +67,12 @@ html, body {
         width: 500px;
         
     }
+}
+
+/* salons */
+.salon-card{
+    height: 400px;
+    width: 400px;
+    border: 1px solid black;
+    border-radius: 12px;
 }

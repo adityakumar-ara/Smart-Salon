@@ -8,23 +8,25 @@
 {% block content %}
 <div class="container-fluid mt-4">
     <!-- Greeting Section -->
-     <!-- First page -->
+    <!-- First page -->
     <h1 class="ms-md-5 ms-3 mt-3"><b>Hello</b> {{user.name}}!</h1>
 
     <!-- Main Row -->
-    
+
     <div class="row align-items-center">
 
         <!-- Left Side: Image Section (col-md-5) -->
-         <!-- only for Mobile -->
+        <!-- only for Mobile -->
         <div class="d-block d-md-none justify-content-start">
 
-            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid " style="height: 300px; width: 300px;"/>
-            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares" style="height: 300px; width: 300px; margin-top: 50px; margin-left: 50px;"/>
+            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid "
+                style="height: 300px; width: 300px;" />
+            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares"
+                style="height: 300px; width: 300px; margin-top: 50px; margin-left: 50px;" />
 
         </div>
         <!-- Only laptop tab -->
-        <div class="d-none d-md-block col-5 col-md-5 justify-content-start">
+        <div class="d-none d-md-block col-5 col-md-5 justify-content-start hero-image-box">
 
             <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid " />
             <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares" />
@@ -50,6 +52,21 @@
 
     </div>
     <!-- Secound page -->
-     
+
+    <!-- Sallon_views -->
+
+    <div class="salons">
+        {% for i in salons %}
+        <div class="salon-card">
+            <h3>{{ i.salon_name }}</h3>
+            <p>{{ i.owner_name }}</p>
+            <p>{{ i.address }}</p>
+            <p>{{ i.open_time }}</p>
+            <p>{{ i.close_time }}</p>
+            <p>{{ i.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
 </div>
 {% endblock %}
