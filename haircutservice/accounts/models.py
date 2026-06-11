@@ -8,6 +8,7 @@ class CustomUser(AbstractUser):
    
     name = models.CharField(max_length=20)
     mobile = models.CharField(max_length=10)
+    image = models.ImageField(upload_to='CustomUser', blank=True, null=True)
 
 
     

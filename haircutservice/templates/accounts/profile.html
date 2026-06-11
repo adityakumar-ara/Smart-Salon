@@ -13,24 +13,37 @@
                 <div class="card-header bg-dark text-white text-center py-3">
                     <h4 class="mb-0">My Profile</h4>
                 </div>
-                
+
                 <!-- Maine yahan se FOR loop hata diya hai -->
                 <div class="card-body text-center p-4">
-                    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=ffc107&color=000&size=150"
-                        class="rounded-circle mb-3 border border-dark shadow-sm" alt="Profile Image">
-
+                    {% if user.image %}
+                    <img src="{{ user.image.url }}" class="rounded-circle mb-3 border border-dark shadow-sm"
+                        style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Image">
+                    {% else %}
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                        class="rounded-circle mb-3 border border-dark shadow-sm"
+                        style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Image">
+                    {% endif %}
                     <h3 class="card-title text-capitalize mb-1">{{ user.name }}</h3>
                     <h5 class="text-muted mb-3">@{{ user.username }}</h5>
-                    
+
                     <p class="text-muted mb-4">Welcome to Royal Salon</p>
 
                     <ul class="list-group list-group-flush text-start mb-4">
-                        <!-- Labels ko unke sahi context ke hisaab se theek kiya hai -->
+
                         <li class="list-group-item">
-                            <strong>Phone Number:</strong> {{ user.mobile }} <!-- Yahan apna actual mobile field name likhein -->
+                            <strong>Phone Number:</strong> {{ user.mobile }}
+
                         </li>
                         <li class="list-group-item">
-                            <strong>Role:</strong> <span class="badge bg-warning text-dark text-capitalize">{{ SignUp.role }}</span>
+                            <strong>Role:
+                                {% if user.is_shopkeeper %}
+                                Shopkeeper
+                                {% elif user.is_customer %}
+                                Customer
+                                {% else %}
+                                Admin
+                                {% endif %}</span>
                         </li>
                         <li class="list-group-item">
                             <strong>Email:</strong> {{ user.email }}
@@ -38,9 +51,27 @@
                         <li class="list-group-item">
                             <strong>Joined On:</strong> {{ user.date_joined|date:"d M Y" }}
                         </li>
+
                     </ul>
+                    <div class="row justify-content-center mt-3">
+                        <div class="col-12 col-md-8">
+
+                            <div class="d-flex justify-content-center gap-2 align-items-center">
+
+                                {% if user.is_authenticated and user.is_shopkeeper %}
+                                <a href="{% url 'salon_detail' %}" class="btn btn-info px-4 py-2" style="font-weight: 500;">See your salon</a>
+                                {% endif %}
+
+                                <a href="{% url 'editprofile' user.id %}" class="btn text-white px-4 py-2"
+                                    style="background: linear-gradient(209deg, #0fe7fa 15%, #0f85fa 33%, #8736d9 65%); font-weight: 500;">
+                                    Edit Profile
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
+
             </div>
         </div>
     </div>

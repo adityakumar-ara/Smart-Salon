@@ -17,19 +17,18 @@
 
         <!-- Left Side: Image Section (col-md-5) -->
         <!-- only for Mobile -->
-        <div class="d-block d-md-none justify-content-start">
+        <div class="d-block d-md-none d-flex justify-content-center phone-container">
+            <div class="phone-wrapper">
+                <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid model-img" />
 
-            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid "
-                style="height: 300px; width: 300px;" />
-            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares"
-                style="height: 300px; width: 300px; margin-top: 50px; margin-left: 50px;" />
-
+                <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares-img" />
+            </div>
         </div>
         <!-- Only laptop tab -->
         <div class="d-none d-md-block col-5 col-md-5 justify-content-start hero-image-box">
 
-            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid " />
-            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares" />
+            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid png-pic" />
+            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares bg-pic" />
 
         </div>
 

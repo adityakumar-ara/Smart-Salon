@@ -4,27 +4,27 @@
   {% csrf_token %}
   <div class="mb-3">
     <label for="" class="form-label">Owner Name:</label>
-    <input type="text" name="owner_name" class="form-control" placeholder="Enter Salon Owner Name" />
+    <input type="text" name="owner_name" class="form-control" placeholder="Enter Salon Owner Name"  required/>
   </div>
   <div class="mb-3">
     <label for="" class="form-label">Salon Name</label>
-    <input type="text" name="salon_name" class="form-control" placeholder="Enter Salon Name" />
+    <input type="text" name="salon_name" class="form-control" placeholder="Enter Salon Name"  required/>
   </div>
   <div class="mb-3">
     <label for="" class="form-label">Salon Location:</label>
-    <textarea name="address" class="form-control" placeholder="Enter Salon Location" maxlength="250"></textarea>
+    <textarea name="address" class="form-control" placeholder="Enter Salon Location" maxlength="250" required></textarea>
   </div>
   <div class="mb-3">
     <label for="" class="form-label">Opening Time:</label>
-    <input type="time" name="open_time" class="form-control" />
+    <input type="time" name="open_time" class="form-control"  required/>
   </div>
   <div class="mb-3">
     <label for="" class="form-label">Closing Time:</label>
-    <input type="time" name="close_time" class="form-control" />
+    <input type="time" name="close_time" class="form-control"  required/>
   </div>
   <div class="mb-3">
     <label for="" class="form-label">About Salon </label>
-    <textarea name="description" class="form-control"></textarea><br />
+    <textarea name="description" class="form-control" required></textarea><br />
   </div>
 
   <button type="submit" class="btn btn-primary">Save Salon</button>

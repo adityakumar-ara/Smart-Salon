@@ -42,15 +42,9 @@ class SalonService(models.Model):
     
 class SalonImage(models.Model):
 
-    salon = models.ForeignKey(
-        Salon,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
+    salon = models.ForeignKey(Salon,on_delete=models.CASCADE,related_name='images')
 
-    image = models.ImageField(
-        upload_to='salon_gallery/'
-    )
+    image = models.ImageField(upload_to='salon_gallery/')
     
     def __str__(self):
         return self.salon.salon_name    

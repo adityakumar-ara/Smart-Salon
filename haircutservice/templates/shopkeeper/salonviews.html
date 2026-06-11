@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/salondetail.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    {% if salon %}
+    <div class="card shadow-lg p-4">
+        {% if user.image %}
+        <img src="{{ user.image.url }}" class="rounded-circle mb-3 border border-dark shadow-sm"
+            style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Image">
+        {% else %}
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+            class="rounded-circle mb-3 border border-dark shadow-sm"
+            style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Image">
+        {% endif %}
+        <h2><strong>Salon name </strong>{{ salon.salon_name }}</h2>
+        <p class="text-muted"><i class="fas fa-map-marker-alt"><strong>Salon Location :-</strong></i> {{ salon.address }}</p>
+
+        <p><strong>Mobile:</strong> {{ salon.owner.mobile }}</p>
+        <p><strong>Owner Name:- </strong>{{ salon.owner_name}}</p>
+        <p><strong>Opening Time:- </strong>{{ salon.open_time }}</p>
+        <p><strong>Closing Time :- </strong>{{ salon.close_time }}</p>
+        <p><strong>About Salon :- </strong>{{ salon.description }}</p>
+        <a href="{% url 'edit_salon' %}" role="button" class="btn" style="background: linear-gradient(90deg, #0f23fa 0%, #0ffffa 20%, #aab851 33%, #0e8684 56%, #008582 65%, #6f7cc3 82%, #4660c8 85%, #00807d 90%, #0f85fa 96%); color: linear-gradient(180deg, #c04211 21%, #151d47 52%, #783d0d 81%, #504a34 100%); font-size: 20px; font-weight: bold;">Update Salon </a>
+    </div>
+    {% else %}
+    <div class="text-center mt-5">
+        <h3 class="text-secondary">Aapne abhi tak koi Salon open nahi kiya hai!</h3>
+        <p>Apni dukan ko digital banayein aur aaj hi register karein.</p>
+        <a href="{% url 'opensalon' %}" class="btn btn-success btn-lg mt-3">Open Salon Now</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

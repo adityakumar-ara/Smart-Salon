@@ -10,7 +10,7 @@ html, body {
     position: relative;
     height: 600px; 
 }
-.img-fluid {
+.png-pic {
     position: absolute;
     top: 0;
     left: 0;
@@ -18,7 +18,7 @@ html, body {
     width: 450px;
     z-index: 2;
 }
-.squares {
+.bg-pic {
     position: absolute;
     top: 70px;
     left: 70px;
@@ -26,7 +26,6 @@ html, body {
     width: 450px;
     z-index: 1;
 }
-/* Mobile ke liye (Default: Image choti rahegi) */
 
 .hero-card {
         border: none;
@@ -58,14 +57,46 @@ html, body {
    
 }
 
+
+.phone-container {
+    margin-top: 20px;
+    margin-bottom: 10px; 
+}
+
+.phone-wrapper {
+    position: relative;
+    width: 300px;  
+    height: 300px; 
+}
+
+.model-img {
+    height: 250px;
+    width: 250px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    object-fit: cover;
+    border-radius: 10px; 
+}
+
+.squares-img {
+    height: 250px;
+    width: 250px;
+    position: absolute;
+    top: 40px;  
+    left: 40px;  
+    z-index: 1;
+    object-fit: cover;
+}
+
 @media (min-width: 768px) {
-    .hero-card{
+    .hero-card {
         margin-top: -250px;
     }
-    .hero-btn{
+    .hero-btn {
         flex-direction: row;
         width: 500px;
-        
     }
 }
 

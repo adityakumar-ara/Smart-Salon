@@ -1,0 +1,31 @@
+{% extends 'main.html'%}
+
+{% block content %}
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="" class="label-control">User Name</label>
+    <input type="text" name="username" id="username" value="{{ user.username }}" class="form-control">
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <label for="" class="label-control"> Name</label>
+    <input type="text" name="name" id="name" value="{{ user.name }}" class="form-control">
+    <label for="" class="label-control">Mobile</label>
+    <input type="number" name="mobile" id="mobile" value="{{ user.mobile }}" class="form-control">
+    <label for="" class="label-control">Email</label>
+    <input type="email" name="email" id="email" value="{{ user.email }}" class="form-control">
+    <label for="" class="label-control">Image</label>
+    <input type="file" name="image" id="image" value="{{ User.image }}" class="form-control">
+
+    <button class="btn btn-outline-success"> Update Profile </button>
+</form>
+{% endblock %}
