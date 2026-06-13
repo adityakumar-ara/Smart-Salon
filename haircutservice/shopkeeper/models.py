@@ -5,17 +5,14 @@ User = get_user_model()
 
 class Salon(models.Model):
 
-    owner = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
+    owner = models.ForeignKey(User,on_delete=models.CASCADE)
 
     owner_name = models.CharField(max_length=100)
 
     salon_name = models.CharField(max_length=100)
 
     address = models.TextField()
-
+    salon_image = models.ImageField(upload_to='salon_image/')
     open_time = models.TimeField()
 
     close_time = models.TimeField()
@@ -45,6 +42,7 @@ class SalonImage(models.Model):
     salon = models.ForeignKey(Salon,on_delete=models.CASCADE,related_name='images')
 
     image = models.ImageField(upload_to='salon_gallery/')
+    description = models.TextField(blank=True, null=True)
     
     def __str__(self):
         return self.salon.salon_name    

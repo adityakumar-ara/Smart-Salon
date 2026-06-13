@@ -1,8 +1,141 @@
 {% extends 'main.html' %}
 {% load static %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/updatesalon.css' %}">
 {% endblock %}
-{% block content %}
 
+{% block content %}
+<div class="container mt-4">
+    <form method="POST" enctype="multipart/form-data" class="p-3">
+        {% csrf_token %}
+
+        <div class="card shadow p-4 mb-5 bg-white border-0">
+            <h3 class="text-primary mb-4 text-center fw-bold">Update Salon Details</h3>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Owner Name:</label>
+                <input type="text" name="owner_name" class="form-control" value="{{ updatesalon.owner_name }}" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Salon Name:</label>
+                <input type="text" name="salon_name" class="form-control" value="{{ updatesalon.salon_name }}" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Owner Mobile Number:</label>
+                <input type="text" name="number" class="form-control" value="{{ updateCustonUse.mobile }}" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Change Main Profile Image:</label>
+                <input type="file" name="image" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Salon Location:</label>
+                <textarea name="address" class="form-control" maxlength="250" rows="3">{{ updatesalon.address }}</textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Opening Time:</label>
+                    <input type="time" name="open_time" value="{{ updatesalon.open_time|time:'H:i' }}" class="form-control" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Closing Time:</label>
+                    <input type="time" name="close_time" value="{{ updatesalon.close_time|time:'H:i' }}" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">About Salon:</label>
+                <textarea name="description" class="form-control" rows="3">{{ updatesalon.description }}</textarea>
+            </div>
+        </div>
+    
+        <div class="card shadow p-4 bg-white border-0">
+            <h2 class="mb-5 text-dark fw-bold text-center">Customize Salon Gallery</h2>
+
+            {% for slot in slots_data %}
+            <div class="service-card row justify-content-center align-items-center g-5 mb-5 pb-4 shadow">
+
+                {% if forloop.counter|divisibleby:2 %}
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">Image {{ forloop.counter }} Description:</label>
+                        <textarea name="img_desc_{{ forloop.counter }}" class="form-control custom-textarea" rows="6" placeholder="Write something beautiful about this image.....">{% if slot.info %}{{ slot.info.description }}{% elif slot.description %}{{ slot.description }}{% endif %}</textarea>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4 d-flex justify-content-center">
+                    <div class="text-center">
+                        <label for="salon-image-{{ forloop.counter }}" class="custom-upload-box shadow-sm" id="upload-label-{{ forloop.counter }}">
+                            
+                            <div class="upload-content {% if slot.info or slot.image %}d-none{% endif %}" id="upload-content-{{ forloop.counter }}">
+                                <span class="plus-icon"><i class="bi bi-upload"></i></span>
+                                <p class="text-muted small mb-0">Upload / Change Photo</p>
+                            </div>
+
+                            <img id="image-preview-{{ forloop.counter }}"
+                                 src="{% if slot.info %}{{ slot.info.image.url }}{% elif slot.image %}{{ slot.image.url }}{% endif %}"
+                                 alt="Preview"
+                                 class="preview-img {% if not slot.info and not slot.image %}d-none{% endif %} img-fluid rounded-3"/>
+                        </label>
+                        <input type="file" name="image_{{ forloop.counter }}" id="salon-image-{{ forloop.counter }}" class="d-none" accept="image/*" onchange="previewImage(event, '{{ forloop.counter }}')" />
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="col-12 col-md-4 d-flex justify-content-center">
+                    <div class="text-center">
+                        <label for="salon-image-{{ forloop.counter }}" class="custom-upload-box shadow-sm" id="upload-label-{{ forloop.counter }}">
+                            <div class="upload-content {% if slot.info or slot.image %}d-none{% endif %}" id="upload-content-{{ forloop.counter }}">
+                                <span class="plus-icon"><i class="bi bi-upload"></i></span>
+                                <p class="text-muted small mb-0">Upload / Change Photo</p>
+                            </div>
+                            <img id="image-preview-{{ forloop.counter }}"
+                                 src="{% if slot.info %}{{ slot.info.image.url }}{% elif slot.image %}{{ slot.image.url }}{% endif %}"
+                                 alt="Preview"
+                                 class="preview-img {% if not slot.info and not slot.image %}d-none{% endif %} img-fluid rounded-3" />
+                        </label>
+                        <input type="file" name="image_{{ forloop.counter }}" id="salon-image-{{ forloop.counter }}" class="d-none" accept="image/*" onchange="previewImage(event, '{{ forloop.counter }}')" />
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary">Image {{ forloop.counter }} Description:</label>
+                        <textarea name="img_desc_{{ forloop.counter }}" class="form-control custom-textarea" rows="6" placeholder="Write something beautiful about this image.....">{% if slot.info %}{{ slot.info.description }}{% elif slot.description %}{{ slot.description }}{% endif %}</textarea>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+
+            <div class="text-center my-4">
+                <button type="submit" class="btn btn-success btn-lg px-5 shadow">Save All Changes</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function previewImage(event, index) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const output = document.getElementById('image-preview-' + index);
+            const contentInside = document.getElementById('upload-content-' + index);
+
+            output.src = reader.result;
+            output.classList.remove('d-none');
+            contentInside.classList.add('d-none');
+        }
+        if (event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+</script>
 {% endblock %}

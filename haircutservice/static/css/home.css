@@ -1,15 +1,19 @@
-*{
+* {
     padding: 0;
     margin: 0;
 }
-html, body {
+
+html,
+body {
     overflow-x: hidden;
     max-width: 100%;
 }
+
 .hero-image-box {
     position: relative;
-    height: 600px; 
+    height: 600px;
 }
+
 .png-pic {
     position: absolute;
     top: 0;
@@ -18,6 +22,7 @@ html, body {
     width: 450px;
     z-index: 2;
 }
+
 .bg-pic {
     position: absolute;
     top: 70px;
@@ -28,45 +33,50 @@ html, body {
 }
 
 .hero-card {
-        border: none;
-        background: transparent;
-        padding-top: 50px;
+    border: none;
+    background: transparent;
+    padding-top: 50px;
 }
+
 .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        color: #1a1a1a;
-        line-height: 1.2;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1.2;
 }
+
 .hero-subtitle {
-        color: #555;
-        font-size: 1.2rem;
-        margin-top: 20px;
+    color: #555;
+    font-size: 1.2rem;
+    margin-top: 20px;
 }
-.hero-title{
-  font-size: clamp(2rem, 5vw, 4rem);
+
+.hero-title {
+    font-size: clamp(2rem, 5vw, 4rem);
 }
-.hero-btn{
+
+.hero-btn {
     display: flex;
     flex-direction: column;
     gap: 20px;
     width: 300px;
 }
-.hero-btn a:nth-child(1){
+
+.hero-btn a:nth-child(1) {
     width: 300px;
-   
+
 }
 
 
 .phone-container {
     margin-top: 20px;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 }
 
 .phone-wrapper {
     position: relative;
-    width: 300px;  
-    height: 300px; 
+    width: 300px;
+    height: 300px;
 }
 
 .model-img {
@@ -77,15 +87,15 @@ html, body {
     left: 0;
     z-index: 2;
     object-fit: cover;
-    border-radius: 10px; 
+    border-radius: 10px;
 }
 
 .squares-img {
     height: 250px;
     width: 250px;
     position: absolute;
-    top: 40px;  
-    left: 40px;  
+    top: 40px;
+    left: 40px;
     z-index: 1;
     object-fit: cover;
 }
@@ -94,16 +104,81 @@ html, body {
     .hero-card {
         margin-top: -250px;
     }
+
     .hero-btn {
         flex-direction: row;
         width: 500px;
     }
+
 }
 
-/* salons */
-.salon-card{
-    height: 400px;
-    width: 400px;
+/* 📱 SCREEN KEVAl MOBILE KE LIYE (Max width 576px) */
+@media (max-width: 576px) {
+    .custom-slider {
+        gap: 20px !important;
+        padding: 0px !important;
+
+    }
+
+    .salon-card {
+        height: 150px !important;
+        width: 200px !important;
+        padding: 0 !important;
+    }
+
+    .salon-img {
+        height: 40px !important;
+        padding: 0px !important;
+    }
+    
+    .salon-time {
+        text-align: left;
+    }
+
+}
+
+
+.salon-card {
+    height: 300px;
+    width: 350px;
     border: 1px solid black;
     border-radius: 12px;
+}
+
+.custom-slider {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+
+.custom-slider::-webkit-scrollbar {
+    height: 6px;
+    display: none;
+}
+
+.custom-slider::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.custom-slider::-webkit-scrollbar-thumb {
+    background: #0f85fa;
+    border-radius: 10px;
+}
+
+.custom-slider::-webkit-scrollbar-thumb:hover {
+    background: #8736d9;
+}
+
+.custom-slider {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.custom-slider::-webkit-scrollbar {
+    display: none;
 }

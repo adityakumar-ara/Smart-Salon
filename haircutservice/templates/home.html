@@ -54,18 +54,55 @@
 
     <!-- Sallon_views -->
 
-    <div class="salons">
-        {% for i in salons %}
-        <div class="salon-card">
-            <h3>{{ i.salon_name }}</h3>
-            <p>{{ i.owner_name }}</p>
-            <p>{{ i.address }}</p>
-            <p>{{ i.open_time }}</p>
-            <p>{{ i.close_time }}</p>
-            <p>{{ i.description }}</p>
-        </div>
-        {% endfor %}
-    </div>
+    <div class="salons-container py-3">
+        <div class="row flex-nowrap overflow-auto g-3 pb-3 custom-slider">
 
+            {% for i in salons %}
+            <div class="col-6 col-sm-6 col-md-4 col-lg-3 flex-shrink-0">
+                <div class="salon-card h-100 shadow-sm border rounded-4 p-3 bg-white">
+
+                    {% if i.salon_image %}
+                    <img src="{{ i.salon_image.url }}" class="salon-img mb-3 border rounded-3 shadow-sm"
+                        style="width: 100%; height: 150px; object-fit: cover;" alt="Salon Image">
+                    {% else %}
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                        class="mb-3 border rounded-3 shadow-sm bg-light"
+                        style="width: 100%; height: 150px; object-fit: contain; padding: 10px;"
+                        alt="Default Profile Image">
+                    {% endif %}
+
+                    <div class="salon-info">
+                        <h4 class="salon-name fw-bold text-dark mb-0 fs-5 text-truncate" title="{{ i.salon_name }}">
+                            {{ i.salon_name }}
+                        </h4>
+
+                        <p class="text-primary small mb-0 owner-name text-truncate">
+                            <i class="fas fa-user me-1"></i> {{ i.owner_name }}
+                        </p>
+
+                        <p class="text-success small mb-0 salon-time text-truncate">
+                            <i class="fas fa-clock me-1"></i> {{ i.open_time }} - {{ i.close_time }}
+                        </p>
+
+                        <p class="text-muted small mb-0 salon-address text-truncate" title="{{ i.address }}">
+                            <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ i.address }}
+                        </p>
+
+                        <hr class="salon-hr">
+
+                        <p class="text-secondary small mb-0 salon-desc text-truncate d-none d-md-block" title="{{ i.description }}">
+                            {{ i.description }}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
+<script src="{% static 'js/home.js' %}"></script>
+
 {% endblock %}

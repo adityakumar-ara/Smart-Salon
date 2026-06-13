@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from accounts .models import CustomUser
-from .models import Salon, SalonImage 
+from .models import Salon, SalonImage
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -10,11 +10,12 @@ def opensalon(request):
     if request.method == "POST":
 
         gender = request.POST.get('gender')
-
-        Salon.objects.create(
+        image_file = request.FILES.get('salon_image')
+        new_salon= Salon.objects.create(
             owner=request.user,
             owner_name=request.POST.get('owner_name'),
             salon_name=request.POST.get('salon_name'),
+            salon_image=image_file,
             address=request.POST.get('address'),
             open_time=request.POST.get('open_time'),
             close_time=request.POST.get('close_time'),
@@ -25,7 +26,7 @@ def opensalon(request):
 
         if image:
             SalonImage.objects.create(
-                salon=Salon,
+                salon=new_salon,
                 image=image
             )
 
@@ -42,16 +43,23 @@ def opensalon(request):
 def home(request):
     
     all_salons = Salon.objects.all()
+
     
     context = {'salons': all_salons}
     return render(request, 'home.html', context)
 
 
 @login_required(login_url='login')
-def salon_detail(request):
-    my_salon = Salon.objects.filter( owner=request.user).first()
+def salon_views(request):
+
+    my_salon = Salon.objects.filter(owner=request.user).first()
+    if my_salon:
+        salon_gallery = SalonImage.objects.filter(salon=my_salon)
+    else:
+        salon_gallery = SalonImage.objects.none()    
     context = {
-        'salon' : my_salon
+        'salon' : my_salon,
+        'saved_gallery':salon_gallery,
     }
     return render(request, 'shopkeeper/salonviews.html', context)
 
@@ -76,11 +84,54 @@ def edit_salon(request):
         editsalon.description = request.POST.get('description',editsalon.description)
         editsalon.save()
         editCustomUser.save() 
-        messages.success(request, "Salon ki details successfully update ho gayi hain! 🎉")
-        return redirect('salon_detail')  
+        
+        existing_pics = editsalon.images.all() # Pehle se saved photos
+        
+        for i in range(1, 6):
+            g_image = request.FILES.get(f'image_{i}')
+            g_desc = request.POST.get(f'img_desc_{i}')
+            
+            # Agar us slot par pehle se photo hai, toh use UPDATE karo
+            if len(existing_pics) >= i:
+                pic_to_update = existing_pics[i-1]
+                if g_image:
+                    pic_to_update.image = g_image
+                if g_desc is not None:
+                    pic_to_update.description = g_desc
+                pic_to_update.save()
+            else:
+                # Agar us slot par pehle se photo nahi hai, toh NAYI CREATE karo
+                if g_image or g_desc:
+                    SalonImage.objects.create(
+                        salon=editsalon, # ⚠️ Agar aapke model mein ForeignKey ka naam 'salon' ki jagah kuch aur hai toh wo likhein
+                        image=g_image,
+                        description=g_desc
+                    )
+
+        messages.success(request, "Salon aur Gallery successfully update ho gayi hain! 🎉")
+        return redirect('salon_views')
+
+    # 3. 🔥 DATA LOAD SYSTEM: Database se data nikaal kar HTML ke 5 slots mein bhejanna
+    all_saved_images = editsalon.images.all()
+    slots_data = []
+    for i in range(1, 6):
+        try:
+            # Agar database mein ith photo majood hai toh utha lo
+            saved_data = all_saved_images[i-1]
+        except IndexError:
+            # Agar nahi hai toh khali chhod do
+            saved_data = None
+            
+        slots_data.append({
+            'index': i,
+            'info': saved_data
+        })
     context = {
         'updatesalon':editsalon,
         'updateCustonUse' : editCustomUser,
+        'slots_data':slots_data,
     } 
     
-    return render(request,'shopkeeper/updatesalon.html', context)    
+    return render(request,'shopkeeper/updatesalon.html', context)
+
+    
