@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from accounts .models import CustomUser
-from .models import Salon, SalonImage
+from .models import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -27,7 +27,8 @@ def opensalon(request):
         if image:
             SalonImage.objects.create(
                 salon=new_salon,
-                image=image
+                image=image,
+                gender = gender,
             )
 
         messages.success(request, "Salon created successfully 🎉")
@@ -134,4 +135,28 @@ def edit_salon(request):
     
     return render(request,'shopkeeper/updatesalon.html', context)
 
-    
+@login_required(login_url='login')
+def add_service(request):
+    if request.method == "POST":
+       service_name = request.POST.get('service_name')
+       service_price = request.POST.get('service_price')
+       about_service = request.POST.get('about_service')
+       service_image = request.FILES.get('service_image')
+       
+       try:
+            # Apne models.py ke hisaab se check kar lein (owner=request.user ya user=request.user)
+            current_salon = Salon.objects.filter(owner=request.user).first() 
+       except Salon.DoesNotExist:
+            messages.error(request, "Pehle aapko apna Salon register karna padega!")
+            return redirect('home') 
+
+       new_service = Service.objects.create(
+        salon=current_salon,
+        service_name = service_name,
+        service_price =service_price,
+        about_service = about_service,
+        service_image = service_image,
+        )
+       messages.success(request,"Your Service is added ")
+       return redirect('add_service')
+    return render(request,'shopkeeper/salon_service.html')

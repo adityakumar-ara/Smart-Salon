@@ -46,3 +46,13 @@ class SalonImage(models.Model):
     
     def __str__(self):
         return self.salon.salon_name    
+    
+
+class Service(models.Model):
+    salon = models.ForeignKey(Salon, on_delete=models.CASCADE)    
+    service_name = models.CharField(max_length=200, null=True , blank=True)
+    service_price = models.DecimalField(max_digits=5, decimal_places=2)
+    about_service = models.TextField(null=True, blank=True)
+    service_image = models.ImageField(upload_to='service/', null=True, blank=True)
+    def __str__(self):
+        return self.Service_name()
