@@ -101,4 +101,7 @@ class SalonImage(models.Model):
     
     def __str__(self):
         return self.salon.salon_name    
-    
+
+class SiderImage(models.Model):
+    image = models.ImageField(upload_to="silder", null=True, blank=True)
+        

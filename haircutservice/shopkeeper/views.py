@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from accounts.models import CustomUser
-from .models import Salon, SalonImage, SalonService, QueueEntry
+from .models import Salon, SalonImage, SalonService, QueueEntry, SiderImage
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -50,6 +50,7 @@ def opensalon(request):
 
 def home(request):
     all_salons = Salon.objects.all()
+    slider_images = SiderImage.objects.all()
     user_queue_ids = []
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
         user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
@@ -57,6 +58,7 @@ def home(request):
     context = {
         'salons': all_salons,
         'user_queue_ids': user_queue_ids,
+        "slide_image" : slider_images,
     }
     return render(request, 'home.html', context)
 

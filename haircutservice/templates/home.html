@@ -13,101 +13,109 @@
 
     <!-- Main Row -->
 
-    <div class="row align-items-center">
-
-        <!-- Left Side: Image Section (col-md-5) -->
-        <!-- only for Mobile -->
-        <div class="d-block d-md-none d-flex justify-content-center phone-container">
-            <div class="phone-wrapper">
-                <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid model-img" />
-
-                <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares-img" />
-            </div>
+    {% if slide_image %}
+    <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            {% for slide in slide_image %}
+            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
         </div>
-        <!-- Only laptop tab -->
-        <div class="d-none d-md-block col-5 col-md-5 justify-content-start hero-image-box">
-
-            <img src="{% static 'images/assets/image.png' %}" alt="Model" class="img-fluid png-pic" />
-            <img src="{% static 'images/assets/squares.png' %}" alt="Design" class="squares bg-pic" />
-
-        </div>
-
-        <!-- Right Side: Content Card (col-md-6) -->
-        <div class="col-12 col-md-7">
-            <div class="hero-card px-3">
-                <h1 class="hero-title fw-bold">
-                    Transform Your Salon <span style="color: #ffc107;">Digitally.</span>
-                </h1>
-                <p class="hero-subtitle lead mt-3 fw-semibold">
-                    The ultimate platform for salon owners to launch their "Digital Dukan"
-                    and for customers to join the smart online queue.
-                </p>
-                <div class="mt-4 hero-btn ">
-                    <a href="#" class="btn btn-warning btn-lg  me-3 shadow-sm">Register Shop</a>
-                    <a href="#" class="btn btn-outline-dark btn-lg px-4">Learn More</a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <!-- Secound page -->
-
-    <!-- Sallon_views -->
-
-    <div class="salons-container py-3">
-        {% if salons %}
-        <div class="row flex-nowrap overflow-auto g-3 pb-3 custom-slider">
-
-            {% for i in salons %}
-            <div class="col-6 col-sm-6 col-md-4 col-lg-3 flex-shrink-0">
-                <div class="salon-card h-100 shadow-sm border rounded-4 p-3 bg-white">
-
-                    {% if i.salon_image %}
-                    <img src="{{ i.salon_image.url }}" class="salon-img mb-3 border rounded-3 shadow-sm"
-                        style="width: 100%; height: 150px; object-fit: cover;" alt="Salon Image">
-                    {% else %}
-                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                        class="mb-3 border rounded-3 shadow-sm bg-light"
-                        style="width: 100%; height: 150px; object-fit: contain; padding: 10px;"
-                        alt="Default Profile Image">
-                    {% endif %}
-
-                    <div class="salon-info">
-                        <h4 class="salon-name fw-bold text-dark mb-0 fs-5 text-truncate" title="{{ i.salon_name }}">
-                            {{ i.salon_name }}
-                        </h4>
-
-                        <p class="text-primary small mb-0 owner-name text-truncate">
-                            <i class="fas fa-user me-1"></i> {{ i.owner_name }}
-                        </p>
-
-                        <p class="text-success small mb-0 salon-time text-truncate">
-                            <i class="fas fa-clock me-1"></i> {{ i.open_time }} - {{ i.close_time }}
-                        </p>
-
-                        <p class="text-muted small mb-0 salon-address text-truncate" title="{{ i.location_text }}">
-                            <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ i.location_text }}
-                        </p>
-
-                        <hr class="salon-hr">
-
-                        <p class="text-secondary small mb-0 salon-desc text-truncate d-none d-md-block" title="{{ i.description }}">
-                            {{ i.description }}
-                        </p>
-                    </div>
-
-                </div>
-
+        <div class="carousel-inner">
+            {% for slide in slide_image %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
+                {% if slide.image %}
+                <img src="{{ slide.image.url }}" class="d-block w-100" alt="Slider Image" style="height: 400px; object-fit: cover;">
+                {% endif %}
+                <div class="carousel-caption d-none d-md-block"></div>
             </div>
             {% endfor %}
         </div>
-        {% else %}
-        <div class="alert alert-info rounded-4 py-4 text-center">
-            <h5 class="mb-1">No salons found yet.</h5>
-            <p class="mb-0">Register a salon or refresh after adding one to see it here.</p>
-        </div>
-        {% endif %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
+    {% endif %}
+    <!-- Right Side: Content Card (col-md-6) -->
+    <div class="col-12 col-md-7">
+        <div class="hero-card px-3">
+            <h1 class="hero-title fw-bold">
+                Transform Your Salon <span style="color: #ffc107;">Digitally.</span>
+            </h1>
+            <p class="hero-subtitle lead mt-3 fw-semibold">
+                The ultimate platform for salon owners to launch their "Digital Dukan"
+                and for customers to join the smart online queue.
+            </p>
+            <div class="mt-4 hero-btn ">
+                <a href="#" class="btn btn-warning btn-lg  me-3 shadow-sm">Register Shop</a>
+                <a href="#" class="btn btn-outline-dark btn-lg px-4">Learn More</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Secound page -->
+
+<!-- Sallon_views -->
+
+<div class="salons-container py-3">
+    {% if salons %}
+    <div class="row flex-nowrap overflow-auto g-3 pb-3 custom-slider">
+
+        {% for i in salons %}
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 flex-shrink-0">
+            <div class="salon-card h-100 shadow-sm border rounded-4 p-3 bg-white">
+
+                {% if i.salon_image %}
+                <img src="{{ i.salon_image.url }}" class="salon-img mb-3 border rounded-3 shadow-sm"
+                    style="width: 100%; height: 150px; object-fit: cover;" alt="Salon Image">
+                {% else %}
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                    class="mb-3 border rounded-3 shadow-sm bg-light"
+                    style="width: 100%; height: 150px; object-fit: contain; padding: 10px;" alt="Default Profile Image">
+                {% endif %}
+
+                <div class="salon-info">
+                    <h4 class="salon-name fw-bold text-dark mb-0 fs-5 text-truncate" title="{{ i.salon_name }}">
+                        {{ i.salon_name }}
+                    </h4>
+
+                    <p class="text-primary small mb-0 owner-name text-truncate">
+                        <i class="fas fa-user me-1"></i> {{ i.owner_name }}
+                    </p>
+
+                    <p class="text-success small mb-0 salon-time text-truncate">
+                        <i class="fas fa-clock me-1"></i> {{ i.open_time }} - {{ i.close_time }}
+                    </p>
+
+                    <p class="text-muted small mb-0 salon-address text-truncate" title="{{ i.location_text }}">
+                        <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ i.location_text }}
+                    </p>
+
+                    <hr class="salon-hr">
+
+                    <p class="text-secondary small mb-0 salon-desc text-truncate d-none d-md-block"
+                        title="{{ i.description }}">
+                        {{ i.description }}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info rounded-4 py-4 text-center">
+        <h5 class="mb-1">No salons found yet.</h5>
+        <p class="mb-0">Register a salon or refresh after adding one to see it here.</p>
+    </div>
+    {% endif %}
+</div>
 </div>
 
 <script src="{% static 'js/home.js' %}"></script>
