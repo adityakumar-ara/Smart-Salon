@@ -13,9 +13,13 @@
                 <div class="card-header bg-dark text-white text-center py-3">
                     <h4 class="mb-0">My Profile</h4>
                 </div>
-                 <div class="">
-                    <a href="{% url 'add_service' %}" class="text-decoration-none"><span class="badge text-bg-secondary ">Add Services</span></a>
-                 </div>
+                <div class="parent-badge">
+                    <a href="{% url 'add_service' %}" class="text-decoration-none"><span
+                            class="badge text-bg-secondary ">Add Services</span></a>
+                            <a href="{% url 'service_views' %}"
+                        class="text-decoration-none "><span class="badge text-bg-secondary ">Views Service </span></a>
+                </div>
+            
                 <!-- Maine yahan se FOR loop hata diya hai -->
                 <div class="card-body text-center p-4">
                     {% if user.image %}
@@ -61,14 +65,16 @@
                             <div class="row justify-content-center gap-2 align-items-center">
 
                                 {% if user.is_authenticated and user.is_shopkeeper %}
-                                <a href="{% url 'salon_detail' %}" class="btn btn-info px-4 py-2" style="font-weight: 500;">See your salon</a>
+                                <a href="{% url 'salon_detail' %}" class="btn btn-info px-4 py-2"
+                                    style="font-weight: 500;">See your salon</a>
                                 {% endif %}
 
                                 <a href="{% url 'editprofile' user.id %}" class="btn text-white px-4 py-2"
                                     style="background: linear-gradient(209deg, #0fe7fa 15%, #0f85fa 33%, #8736d9 65%); font-weight: 500;">
                                     Edit Profile
                                 </a>
-                                <button class="btn btn-primary " onclick="history.back()"><i class="fas fa-arrow-left me-2"></i> Go Back</button>
+                                <a class="btn btn-primary " href="{% url 'home' %}"><i
+                                        class="fas fa-arrow-left me-2"></i> Go Back</a>
                             </div>
                         </div>
                     </div>

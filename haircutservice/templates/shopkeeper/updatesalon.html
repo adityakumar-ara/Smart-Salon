@@ -8,6 +8,13 @@
 {% block content %}
 <div class="container mt-4">
     <form method="POST" enctype="multipart/form-data" class="p-3">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'salon_detail' %}">Salon Details</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Update Salon Details </li>
+            </ol>
+        </nav>
         {% csrf_token %}
 
         <div class="card shadow p-4 mb-5 bg-white border-0">
@@ -35,17 +42,33 @@
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Salon Location:</label>
-                <textarea name="address" class="form-control" maxlength="250" rows="3">{{ updatesalon.address }}</textarea>
+                <p class="text-muted mb-2">Current: {% if updatesalon.location_map_url %}
+                    <a href="{{ updatesalon.location_map_url }}" target="_blank" class="text-decoration-none">{{ updatesalon.location_text }}</a>
+                    {% else %}
+                    {{ updatesalon.location_text }}
+                    {% endif %}</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Latitude:</label>
+                        <input type="text" name="latitude" class="form-control" value="{{ updatesalon.latitude }}" placeholder="e.g. 28.7041" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Longitude:</label>
+                        <input type="text" name="longitude" class="form-control" value="{{ updatesalon.longitude }}" placeholder="e.g. 77.1025" />
+                    </div>
+                </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-bold">Opening Time:</label>
-                    <input type="time" name="open_time" value="{{ updatesalon.open_time|time:'H:i' }}" class="form-control" />
+                    <input type="time" name="open_time" value="{{ updatesalon.open_time|time:'H:i' }}"
+                        class="form-control" />
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-bold">Closing Time:</label>
-                    <input type="time" name="close_time" value="{{ updatesalon.close_time|time:'H:i' }}" class="form-control" />
+                    <input type="time" name="close_time" value="{{ updatesalon.close_time|time:'H:i' }}"
+                        class="form-control" />
                 </div>
             </div>
 
@@ -54,7 +77,7 @@
                 <textarea name="description" class="form-control" rows="3">{{ updatesalon.description }}</textarea>
             </div>
         </div>
-    
+
         <div class="card shadow p-4 bg-white border-0">
             <h2 class="mb-5 text-dark fw-bold text-center">Customize Salon Gallery</h2>
 
@@ -64,50 +87,60 @@
                 {% if forloop.counter|divisibleby:2 %}
                 <div class="col-12 col-md-6">
                     <div class="mb-3">
-                        <label class="form-label fw-bold text-secondary">Image {{ forloop.counter }} Description:</label>
-                        <textarea name="img_desc_{{ forloop.counter }}" class="form-control custom-textarea" rows="6" placeholder="Write something beautiful about this image.....">{% if slot.info %}{{ slot.info.description }}{% elif slot.description %}{{ slot.description }}{% endif %}</textarea>
+                        <label class="form-label fw-bold text-secondary">Image {{ forloop.counter }}
+                            Description:</label>
+                        <textarea name="img_desc_{{ forloop.counter }}" class="form-control custom-textarea" rows="6"
+                            placeholder="Write something beautiful about this image.....">{% if slot.info %}{{ slot.info.description }}{% elif slot.description %}{{ slot.description }}{% endif %}</textarea>
                     </div>
                 </div>
 
                 <div class="col-12 col-md-4 d-flex justify-content-center">
                     <div class="text-center">
-                        <label for="salon-image-{{ forloop.counter }}" class="custom-upload-box shadow-sm" id="upload-label-{{ forloop.counter }}">
-                            
-                            <div class="upload-content {% if slot.info or slot.image %}d-none{% endif %}" id="upload-content-{{ forloop.counter }}">
+                        <label for="salon-image-{{ forloop.counter }}" class="custom-upload-box shadow-sm"
+                            id="upload-label-{{ forloop.counter }}">
+
+                            <div class="upload-content {% if slot.info or slot.image %}d-none{% endif %}"
+                                id="upload-content-{{ forloop.counter }}">
                                 <span class="plus-icon"><i class="bi bi-upload"></i></span>
                                 <p class="text-muted small mb-0">Upload / Change Photo</p>
                             </div>
 
                             <img id="image-preview-{{ forloop.counter }}"
-                                 src="{% if slot.info %}{{ slot.info.image.url }}{% elif slot.image %}{{ slot.image.url }}{% endif %}"
-                                 alt="Preview"
-                                 class="preview-img {% if not slot.info and not slot.image %}d-none{% endif %} img-fluid rounded-3"/>
+                                src="{% if slot.info %}{{ slot.info.image.url }}{% elif slot.image %}{{ slot.image.url }}{% endif %}"
+                                alt="Preview"
+                                class="preview-img {% if not slot.info and not slot.image %}d-none{% endif %} img-fluid rounded-3" />
                         </label>
-                        <input type="file" name="image_{{ forloop.counter }}" id="salon-image-{{ forloop.counter }}" class="d-none" accept="image/*" onchange="previewImage(event, '{{ forloop.counter }}')" />
+                        <input type="file" name="image_{{ forloop.counter }}" id="salon-image-{{ forloop.counter }}"
+                            class="d-none" accept="image/*" onchange="previewImage(event, '{{ forloop.counter }}')" />
                     </div>
                 </div>
 
                 {% else %}
                 <div class="col-12 col-md-4 d-flex justify-content-center">
                     <div class="text-center">
-                        <label for="salon-image-{{ forloop.counter }}" class="custom-upload-box shadow-sm" id="upload-label-{{ forloop.counter }}">
-                            <div class="upload-content {% if slot.info or slot.image %}d-none{% endif %}" id="upload-content-{{ forloop.counter }}">
+                        <label for="salon-image-{{ forloop.counter }}" class="custom-upload-box shadow-sm"
+                            id="upload-label-{{ forloop.counter }}">
+                            <div class="upload-content {% if slot.info or slot.image %}d-none{% endif %}"
+                                id="upload-content-{{ forloop.counter }}">
                                 <span class="plus-icon"><i class="bi bi-upload"></i></span>
                                 <p class="text-muted small mb-0">Upload / Change Photo</p>
                             </div>
                             <img id="image-preview-{{ forloop.counter }}"
-                                 src="{% if slot.info %}{{ slot.info.image.url }}{% elif slot.image %}{{ slot.image.url }}{% endif %}"
-                                 alt="Preview"
-                                 class="preview-img {% if not slot.info and not slot.image %}d-none{% endif %} img-fluid rounded-3" />
+                                src="{% if slot.info %}{{ slot.info.image.url }}{% elif slot.image %}{{ slot.image.url }}{% endif %}"
+                                alt="Preview"
+                                class="preview-img {% if not slot.info and not slot.image %}d-none{% endif %} img-fluid rounded-3" />
                         </label>
-                        <input type="file" name="image_{{ forloop.counter }}" id="salon-image-{{ forloop.counter }}" class="d-none" accept="image/*" onchange="previewImage(event, '{{ forloop.counter }}')" />
+                        <input type="file" name="image_{{ forloop.counter }}" id="salon-image-{{ forloop.counter }}"
+                            class="d-none" accept="image/*" onchange="previewImage(event, '{{ forloop.counter }}')" />
                     </div>
                 </div>
 
                 <div class="col-12 col-md-6">
                     <div class="mb-3">
-                        <label class="form-label fw-bold text-secondary">Image {{ forloop.counter }} Description:</label>
-                        <textarea name="img_desc_{{ forloop.counter }}" class="form-control custom-textarea" rows="6" placeholder="Write something beautiful about this image.....">{% if slot.info %}{{ slot.info.description }}{% elif slot.description %}{{ slot.description }}{% endif %}</textarea>
+                        <label class="form-label fw-bold text-secondary">Image {{ forloop.counter }}
+                            Description:</label>
+                        <textarea name="img_desc_{{ forloop.counter }}" class="form-control custom-textarea" rows="6"
+                            placeholder="Write something beautiful about this image.....">{% if slot.info %}{{ slot.info.description }}{% elif slot.description %}{{ slot.description }}{% endif %}</textarea>
                     </div>
                 </div>
                 {% endif %}

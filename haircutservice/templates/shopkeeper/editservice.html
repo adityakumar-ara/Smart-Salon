@@ -1,0 +1,54 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card shadow border-0 rounded-4 p-4 bg-white">
+        <h3 class="fw-bold text-dark mb-4 text-center">⚙️ Edit Service</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Service Name</label>
+                <input type="text" name="service_name" value="{{ service.name }}" class="form-select border rounded-3"
+                    required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Price (₹)</label>
+                <input type="number" name="service_price" value="{{ service.price }}"
+                    class="form-select border rounded-3" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Target Gender</label>
+                <select name="target_gender" class="form-select border rounded-3" required>
+                    <option value="unisex" {% if service.target_gender == 'unisex' %}selected{% endif %}>Unisex (Both)
+                    </option>
+                    <option value="male" {% if service.target_gender == 'male' %}selected{% endif %}>Male Only</option>
+                    <option value="female" {% if service.target_gender == 'female' %}selected{% endif %}>Female Only
+                    </option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Service Image</label>
+                {% if service.image %}
+                <div class="mb-2">
+                    <img src="{{ service.image.url }}" alt="current" class="rounded border shadow-sm"
+                        style="height: 80px; object-fit: cover;">
+                    <span class="text-muted small d-block">Current Image</span>
+                </div>
+                {% endif %}
+                <input type="file" name="service_image" class="form-control border rounded-3">
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button onclick="history.back()" type="button" class="btn btn-light border fw-semibold">Cancel</button>
+                <button type="submit" class="btn btn-warning fw-bold text-dark px-4 shadow-sm">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -28,3 +28,30 @@ body{
     bottom: 20px;
     z-index: 999;
 }
+
+/* Footer styles */
+.site-footer{
+    background: #0b1020;
+    color: #dcdfe6;
+    padding: 40px 0 20px;
+    margin-top: 40px;
+}
+.site-footer h5{
+    color: #fff;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+.site-footer p, .site-footer a, .site-footer li{
+    color: #c7c9d1;
+    font-size: 14px;
+}
+.site-footer a{ text-decoration: none; }
+.site-footer .footer-top{ padding: 18px 15px; }
+.site-footer .footer-col{ margin-bottom: 18px; }
+.site-footer .social-icons a{ margin-right:10px; color:#fff; background:#1b2433; padding:8px; border-radius:50%; display:inline-block;}
+.site-footer .footer-bottom{ padding-top:16px; border-top:1px solid rgba(255,255,255,0.05); margin-top:12px; font-size:14px; }
+
+@media (max-width: 576px){
+    .site-footer .row{ gap: 12px; }
+    .profile{ height:80px; width:80px; right:12px; bottom:12px; }
+}

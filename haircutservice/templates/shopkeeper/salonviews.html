@@ -8,6 +8,13 @@
 {% block content %}
 <div class="container mt-4">
     {% if salon %}
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'profile' %}">Profile </a></li>
+            <li class="breadcrumb-item active" aria-current="page">Salon Details </li>
+        </ol>
+    </nav>
     <div class="card shadow-lg p-4 border-0 rounded-4 mb-5 bg-white">
         <div class="d-flex flex-column flex-md-row align-items-center mb-4">
             {% if salon.owner.image %}
@@ -22,8 +29,16 @@
 
             <div>
                 <h2 class="fw-bold text-dark mb-1">{{ salon.salon_name }}</h2>
-                <p class="text-muted mb-0"><i
-                        class="fas fa-map-marker-alt me-2 text-danger"></i><strong>Location:</strong> {{ salon.address }}</p>
+                <p class="text-muted mb-0 d-flex align-items-center gap-2">
+                    <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                    <strong>Location:</strong>
+                    <span>{{ salon.location_text }}</span>
+                    {% if salon.location_map_url %}
+                    <a href="{{ salon.location_map_url }}" target="_blank" class="text-decoration-none text-info">
+                        View on map
+                    </a>
+                    {% endif %}
+                </p>
             </div>
         </div>
 
@@ -38,12 +53,61 @@
             </div>
         </div>
 
-        <div class="mt-4 text-end">
+        <div class="card shadow-sm border border-secondary rounded-4 p-4 mt-4 bg-white">
+            <h3 class="fw-bold text-dark mb-4">Current Queue</h3>
+            {% if queue_entries %}
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Customer</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in queue_entries %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ entry.customer.username }}</td>
+                            <td>{{ entry.service.name if entry.service else 'General' }}</td>
+                            <td class="text-capitalize">{{ entry.status }}</td>
+                            <td>
+                                {% if entry.status == 'waiting' %}
+                                <a href="{% url 'accept_order' entry.id %}" class="btn btn-success btn-sm me-2">Accept</a>
+                                <a href="{% url 'cancel_order' entry.id %}" class="btn btn-danger btn-sm">Cancel</a>
+                                {% elif entry.status == 'seated' %}
+                                <a href="{% url 'cancel_order' entry.id %}" class="btn btn-danger btn-sm">Cancel</a>
+                                {% else %}
+                                <span class="text-muted">No actions</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4 text-muted">
+                No active bookings yet. Customers can book a sit from the service pages.
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-4 text-end d-flex flex-column flex-md-row justify-content-end gap-2">
             <a href="{% url 'edit_salon' %}" role="button"
                 class="btn btn-lg px-4 py-2 text-white fw-bold shadow-sm rounded-3"
                 style="background: linear-gradient(90deg, #0f23fa 0%, #0e8684 100%); transition: transform 0.2s;">
                 <i class="bi bi-pencil-square me-2"></i>Update Salon
             </a>
+            {% if salon.location_map_url %}
+            <a href="{{ salon.location_map_url }}" target="_blank" role="button"
+                class="btn btn-lg px-4 py-2 btn-outline-primary fw-bold shadow-sm rounded-3">
+                <i class="bi bi-geo-alt me-2"></i>View {{ salon.salon_name }} on Map
+            </a>
+            {% endif %}
         </div>
     </div>
 

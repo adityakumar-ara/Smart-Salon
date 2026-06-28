@@ -9,7 +9,7 @@
 <div class="container-fluid mt-4">
     <!-- Greeting Section -->
     <!-- First page -->
-    <h1 class="ms-md-5 ms-3 mt-3"><b>Hello</b> {{user.name}}!</h1>
+    <h1 class="ms-md-5 ms-3 mt-3"><b>Hello</b> {{ user.name|default:'Guest' }}!</h1>
 
     <!-- Main Row -->
 
@@ -55,6 +55,7 @@
     <!-- Sallon_views -->
 
     <div class="salons-container py-3">
+        {% if salons %}
         <div class="row flex-nowrap overflow-auto g-3 pb-3 custom-slider">
 
             {% for i in salons %}
@@ -84,8 +85,8 @@
                             <i class="fas fa-clock me-1"></i> {{ i.open_time }} - {{ i.close_time }}
                         </p>
 
-                        <p class="text-muted small mb-0 salon-address text-truncate" title="{{ i.address }}">
-                            <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ i.address }}
+                        <p class="text-muted small mb-0 salon-address text-truncate" title="{{ i.location_text }}">
+                            <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ i.location_text }}
                         </p>
 
                         <hr class="salon-hr">
@@ -100,6 +101,12 @@
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="alert alert-info rounded-4 py-4 text-center">
+            <h5 class="mb-1">No salons found yet.</h5>
+            <p class="mb-0">Register a salon or refresh after adding one to see it here.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 

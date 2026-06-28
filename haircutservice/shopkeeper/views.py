@@ -1,22 +1,30 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from accounts .models import CustomUser
-from .models import *
+from accounts.models import CustomUser
+from .models import Salon, SalonImage, SalonService, QueueEntry
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='login')
 def opensalon(request):
 
+    existing_by_owner = Salon.objects.filter(owner=request.user).exists()
+    existing_by_email = Salon.objects.filter(owner__email=request.user.email).exclude(owner=request.user).exists()
+    if existing_by_owner or existing_by_email:
+        messages.error(request, "Salon alredy open this Email ")
+        return redirect('home')
+
     if request.method == "POST":
 
-        gender = request.POST.get('gender')
         image_file = request.FILES.get('salon_image')
-        new_salon= Salon.objects.create(
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        new_salon = Salon.objects.create(
             owner=request.user,
             owner_name=request.POST.get('owner_name'),
             salon_name=request.POST.get('salon_name'),
             salon_image=image_file,
-            address=request.POST.get('address'),
+            latitude=float(latitude) if latitude else None,
+            longitude=float(longitude) if longitude else None,
             open_time=request.POST.get('open_time'),
             close_time=request.POST.get('close_time'),
             description=request.POST.get('description'),
@@ -28,7 +36,6 @@ def opensalon(request):
             SalonImage.objects.create(
                 salon=new_salon,
                 image=image,
-                gender = gender,
             )
 
         messages.success(request, "Salon created successfully 🎉")
@@ -42,12 +49,76 @@ def opensalon(request):
 
 
 def home(request):
-    
     all_salons = Salon.objects.all()
+    user_queue_ids = []
+    if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
+        user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
 
-    
-    context = {'salons': all_salons}
+    context = {
+        'salons': all_salons,
+        'user_queue_ids': user_queue_ids,
+    }
     return render(request, 'home.html', context)
+
+
+@login_required(login_url='login')
+def join_queue(request, service_id):
+    service = get_object_or_404(SalonService, id=service_id)
+    salon = service.salon
+    if not hasattr(request.user, 'is_customer') or not request.user.is_customer:
+        messages.error(request, 'Only customers can book sit for a service.')
+        return redirect(request.META.get('HTTP_REFERER') or 'home')
+
+    active_booking = QueueEntry.objects.filter(
+        customer=request.user,
+        status__in=['waiting', 'seated']
+    ).exists()
+
+    if active_booking:
+        messages.info(request, 'You already have an active booking. Leave it before booking another service.')
+        return redirect(request.META.get('HTTP_REFERER') or 'home')
+
+    entry = QueueEntry.objects.create(salon=salon, service=service, customer=request.user)
+    messages.success(request, f'Booked sit for {service.name} at {salon.salon_name}. Your waiting position is {entry.position}.')
+    return redirect(request.META.get('HTTP_REFERER') or 'home')
+
+
+@login_required(login_url='login')
+def leave_queue(request, service_id):
+    service = get_object_or_404(SalonService, id=service_id)
+    entry = QueueEntry.objects.filter(service=service, customer=request.user, status='waiting').first()
+    if not entry:
+        messages.error(request, 'You do not have an active waiting booking for this service.')
+        return redirect(request.META.get('HTTP_REFERER') or 'home')
+
+    entry.status = 'cancelled'
+    entry.save()
+    messages.success(request, f'Your booking for {service.name} has been cancelled.')
+    return redirect(request.META.get('HTTP_REFERER') or 'home')
+
+
+@login_required(login_url='login')
+def accept_order(request, entry_id):
+    entry = get_object_or_404(QueueEntry, id=entry_id, salon__owner=request.user)
+    if entry.status != 'waiting':
+        messages.info(request, 'This order cannot be accepted because it is not waiting.')
+        return redirect('salon_detail')
+    entry.status = 'seated'
+    entry.save()
+    messages.success(request, f'{entry.customer.username} has been accepted and seated.')
+    return redirect('salon_detail')
+
+
+@login_required(login_url='login')
+def cancel_order(request, entry_id):
+    entry = get_object_or_404(QueueEntry, id=entry_id, salon__owner=request.user)
+    if entry.status not in ['waiting', 'seated']:
+        messages.info(request, 'This order cannot be cancelled.')
+        return redirect('salon_detail')
+    entry.status = 'cancelled'
+    entry.save()
+    messages.success(request, f'Booking for {entry.customer.username} has been cancelled.')
+    return redirect('salon_detail')
 
 
 @login_required(login_url='login')
@@ -56,11 +127,14 @@ def salon_views(request):
     my_salon = Salon.objects.filter(owner=request.user).first()
     if my_salon:
         salon_gallery = SalonImage.objects.filter(salon=my_salon)
+        queue_entries = my_salon.queue_entries.filter(status__in=['waiting', 'seated']).select_related('customer', 'service')
     else:
-        salon_gallery = SalonImage.objects.none()    
+        salon_gallery = SalonImage.objects.none()
+        queue_entries = QueueEntry.objects.none()
     context = {
-        'salon' : my_salon,
-        'saved_gallery':salon_gallery,
+        'salon': my_salon,
+        'saved_gallery': salon_gallery,
+        'queue_entries': queue_entries,
     }
     return render(request, 'shopkeeper/salonviews.html', context)
 
@@ -79,7 +153,13 @@ def edit_salon(request):
         if request.FILES.get('image'):
                editCustomUser.image = request.FILES.get('image')
 
-        editsalon.address = request.POST.get('address',editsalon.address)
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        if latitude:
+            editsalon.latitude = float(latitude)
+        if longitude:
+            editsalon.longitude = float(longitude)
+
         editsalon.open_time = request.POST.get('open_time',editsalon.open_time)
         editsalon.close_time = request.POST.get('close_time',editsalon.close_time)
         editsalon.description = request.POST.get('description',editsalon.description)
@@ -102,9 +182,9 @@ def edit_salon(request):
                 pic_to_update.save()
             else:
                 # Agar us slot par pehle se photo nahi hai, toh NAYI CREATE karo
-                if g_image or g_desc:
+                if g_image:
                     SalonImage.objects.create(
-                        salon=editsalon, # ⚠️ Agar aapke model mein ForeignKey ka naam 'salon' ki jagah kuch aur hai toh wo likhein
+                        salon=editsalon,
                         image=g_image,
                         description=g_desc
                     )
@@ -138,25 +218,90 @@ def edit_salon(request):
 @login_required(login_url='login')
 def add_service(request):
     if request.method == "POST":
-       service_name = request.POST.get('service_name')
-       service_price = request.POST.get('service_price')
-       about_service = request.POST.get('about_service')
-       service_image = request.FILES.get('service_image')
+       name = request.POST.get('service_name')
+       price = request.POST.get('service_price')
+       image = request.FILES.get('service_image')
+       target_gender = request.POST.get('target_gender')
        
-       try:
-            # Apne models.py ke hisaab se check kar lein (owner=request.user ya user=request.user)
-            current_salon = Salon.objects.filter(owner=request.user).first() 
-       except Salon.DoesNotExist:
+       current_salon = Salon.objects.filter(owner=request.user).first()
+       if not current_salon:
             messages.error(request, "Pehle aapko apna Salon register karna padega!")
-            return redirect('home') 
+            return redirect('opensalon')
 
-       new_service = Service.objects.create(
-        salon=current_salon,
-        service_name = service_name,
-        service_price =service_price,
-        about_service = about_service,
-        service_image = service_image,
+       SalonService.objects.create(
+            salon=current_salon,
+            name=name,
+            price=price,
+            image=image,
+            target_gender=target_gender,
         )
-       messages.success(request,"Your Service is added ")
+       messages.success(request,"Your Service is added")
+       
        return redirect('add_service')
     return render(request,'shopkeeper/salon_service.html')
+
+@login_required(login_url='login')
+def service_views(request):
+
+    current_salon = Salon.objects.filter(owner=request.user).first()
+    if not current_salon:
+         messages.error(request, 'No salon found for your account.')
+         return redirect('home')
+    all_service = SalonService.objects.filter(salon=current_salon)
+
+    context = {
+        'services' : all_service
+    }
+    return render(request, 'shopkeeper/service_views.html', context)
+    
+@login_required(login_url='login')
+def edit_service(request, service_id):
+    service = get_object_or_404(SalonService, id=service_id, salon__owner=request.user)
+    
+    if request.method == "POST":
+        service.name = request.POST.get('service_name')
+        service.price = request.POST.get('service_price')
+        service.target_gender = request.POST.get('target_gender')
+        
+        if request.FILES.get('service_image'):
+            service.image = request.FILES.get('service_image')
+            
+        service.save() # Database me update ho gaya
+        messages.success(request, "Service updated successfully! 🎉")
+        return redirect('service_views') 
+
+    return render(request, 'shopkeeper/editservice.html', {'service': service})
+
+
+
+@login_required(login_url='login')
+def delete_service(request, service_id):
+    
+    service = get_object_or_404(SalonService, id=service_id, salon__owner=request.user)
+    
+    service.delete()
+    messages.success(request, "Service deleted successfully! 🗑️")
+    return redirect('service_views')
+
+def male_section(request):
+    
+    male_service = SalonService.objects.filter(target_gender__in=['male', 'unisex'])
+    current_booking = None
+    if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
+        current_booking = QueueEntry.objects.filter(customer=request.user, status='waiting').select_related('service').first()
+    context = {
+        'services': male_service,
+        'current_booking': current_booking,
+    }
+    return render(request, 'shopkeeper/maleservice.html', context)
+def female_section(request):
+    
+    female_service = SalonService.objects.filter(target_gender__in=['female', 'unisex'])
+    current_booking = None
+    if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
+        current_booking = QueueEntry.objects.filter(customer=request.user, status='waiting').select_related('service').first()
+    context = {
+        'services': female_service,
+        'current_booking': current_booking,
+    }
+    return render(request, 'shopkeeper/femaleservice.html', context)

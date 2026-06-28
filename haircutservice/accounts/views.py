@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .models import CustomUser
+from shopkeeper.models import Salon
 
 User = get_user_model()
 
@@ -72,10 +73,11 @@ def login(request):
             messages.success(request, f"Welcome {user.username}!")
             return redirect('home')
         else:
-            
             messages.error(request, "Invalid Username or Password. Please try again.")
-            return redirect('login')
-    return render(request, 'home.html')  
+            return redirect('home')
+
+    salons = Salon.objects.all()
+    return render(request, 'home.html', {'salons': salons})
 
 @login_required(login_url='login')
 def logout_user (request):
