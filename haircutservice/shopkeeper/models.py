@@ -103,5 +103,8 @@ class SalonImage(models.Model):
         return self.salon.salon_name    
 
 class SiderImage(models.Model):
-    image = models.ImageField(upload_to="silder", null=True, blank=True)
-        
+    image = models.ImageField(upload_to="slider/", null=True, blank=True)
+
+    def __str__(self):
+        # Returns the filename for a more descriptive name in the admin
+        return self.image.name.split('/')[-1] if self.image else f"Slider Image {self.id}"

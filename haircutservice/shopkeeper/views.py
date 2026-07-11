@@ -50,7 +50,8 @@ def opensalon(request):
 
 def home(request):
     all_salons = Salon.objects.all()
-    slider_images = SiderImage.objects.all()
+    # Improvement: Only fetch slider images that actually have an image file.
+    slider_images = SiderImage.objects.exclude(image__isnull=True).exclude(image__exact='')
     user_queue_ids = []
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
         user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
@@ -62,6 +63,26 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+
+def salon_detail_public(request, salon_id):
+    salon = get_object_or_404(Salon, id=salon_id)
+    services = SalonService.objects.filter(salon=salon)
+    gallery_images = SalonImage.objects.filter(salon=salon)
+    
+    user_queue_ids = []
+    current_booking = None
+    if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
+        user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
+        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service').first()
+
+    context = {
+        'salon': salon,
+        'services': services,
+        'gallery_images': gallery_images,
+        'user_queue_ids': user_queue_ids,
+        'current_booking': current_booking,
+    }
+    return render(request, 'shopkeeper/salon_detail_public.html', context)
 
 @login_required(login_url='login')
 def join_queue(request, service_id):
