@@ -1,0 +1,98 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Salon Header -->
+            <div class="d-flex align-items-center mb-4">
+                {% if salon.salon_image %}
+                <img src="{{ salon.salon_image.url }}" alt="{{ salon.salon_name }}" class="rounded-circle me-3 shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                {% endif %}
+                <div>
+                    <h1 class="fw-bold">{{ salon.salon_name }}</h1>
+                    <p class="text-muted mb-0"><i class="fas fa-user me-1"></i> Owned by {{ salon.owner_name }}</p>
+                    <p class="text-muted mb-0"><i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ salon.location_text }}</p>
+                </div>
+            </div>
+
+            <!-- Description -->
+            {% if salon.description %}
+            <p class="lead">{{ salon.description }}</p>
+            <hr>
+            {% endif %}
+
+            <!-- Gallery Slider -->
+            {% if gallery_images %}
+            <h3 class="fw-bold mb-3">Gallery</h3>
+                <div class="row g-3">
+                    {% for image in gallery_images %}
+                    <div class="col-md-4">
+                        <a href="{{ image.image.url }}" data-lightbox="salon-gallery">
+                            <img src="{{ image.image.url }}" class="img-fluid rounded shadow-sm" alt="Gallery image">
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            <hr class="my-4">
+            {% endif %}
+
+            <!-- Services -->
+            <h3 class="fw-bold mb-3">Our Services</h3>
+            <div class="list-group">
+                {% for service in services %}
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ service.image.url }}" alt="{{ service.name }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        <div>
+                            <h5 class="mb-1">{{ service.name }}</h5>
+                            <p class="mb-1 fw-bold text-success">₹{{ service.price }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        {% if user.is_authenticated and user.is_customer %}
+                            {% if current_booking %}
+                                {% if current_booking.service.id == service.id %}
+                                    <a href="{% url 'leave_queue' service.id %}" class="btn btn-danger btn-sm">Leave Queue</a>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-sm" disabled title="You have another active booking">Join Queue</button>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'join_queue' service.id %}" class="btn btn-warning btn-sm">Join Queue</a>
+                            {% endif %}
+                        {% elif user.is_authenticated %}
+                             <button class="btn btn-secondary btn-sm" disabled>Shopkeepers can't join</button>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login to Join</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No services offered at this time.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header fw-bold">
+                    Salon Details
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><i class="fas fa-clock me-2 text-primary"></i> <strong>Timings:</strong> {{ salon.open_time|time:"g:i A" }} - {{ salon.close_time|time:"g:i A" }}</li>
+                    <li class="list-group-item"><i class="fas fa-users me-2 text-info"></i> <strong>Current Waitlist:</strong> {{ salon.waiting_queue_count }} people</li>
+                    {% if salon.location_map_url %}
+                    <li class="list-group-item text-center p-3">
+                        <a href="{{ salon.location_map_url }}" target="_blank" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-map-marked-alt me-2"></i> View on Map
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

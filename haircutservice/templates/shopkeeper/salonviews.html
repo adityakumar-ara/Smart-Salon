@@ -72,7 +72,7 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ entry.customer.username }}</td>
-                            <td>{{ entry.service.name if entry.service else 'General' }}</td>
+                            <td>{% if entry.service %}{{ entry.service.name }}{% else %}General{% endif %}</td>
                             <td class="text-capitalize">{{ entry.status }}</td>
                             <td>
                                 {% if entry.status == 'waiting' %}
