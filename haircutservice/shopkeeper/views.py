@@ -328,3 +328,15 @@ def female_section(request):
         'current_booking': current_booking,
     }
     return render(request, 'shopkeeper/femaleservice.html', context)
+
+def about_service_page(request,service_id):
+    service_data = get_object_or_404(SalonService, id=service_id, is_active = True)
+    current_booking = None
+    if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
+        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service').first()
+
+    context = {
+        'service':service_data,
+        'current_booking': current_booking,
+    }
+    return render(request,'shopkeeper/about_seervice_page.html', context)

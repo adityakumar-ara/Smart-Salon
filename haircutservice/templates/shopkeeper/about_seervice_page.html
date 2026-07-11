@@ -1,0 +1,81 @@
+{% extends 'main.html'%} 
+{% load static %}
+
+{% block extra_css %}
+{% endblock %}
+{% block content%}
+<div class="container my-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-lg-5">
+            <div class="row">
+                <!-- Service Image -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    {% if service.image %}
+                        <a href="{{ service.image.url }}" data-lightbox="service-image" data-title="{{ service.name }}">
+                            <img src="{{ service.image.url }}" class="img-fluid rounded-3 w-100" alt="{{ service.name }}" style="max-height: 500px; object-fit: cover; cursor: pointer;">
+                        </a>
+                    {% else %}
+                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center w-100" style="height: 400px;">
+                            <i class="fas fa-cut fa-5x text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Service Details -->
+                <div class="col-lg-6">
+                    <!-- Breadcrumb/Salon Link -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'salon_detail_public' service.salon.id %}">{{ service.salon.salon_name }}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ service.name }}</li>
+                        </ol>
+                    </nav>
+
+                    <h1 class="fw-bolder display-5 mb-2">{{ service.name }}</h1>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-primary me-2 text-capitalize">{{ service.target_gender }}</span>
+                        <span class="text-muted">Service</span>
+                    </div>
+
+                    <p class="fs-2 fw-bold text-success mb-4">₹{{ service.price }}</p>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        {% if user.is_authenticated and user.is_customer %}
+                            {% if current_booking %}
+                                {% if current_booking.service.id == service.id %}
+                                    <a href="{% url 'leave_queue' service.id %}" class="btn btn-danger btn-lg shadow-sm"><i class="fas fa-times-circle me-2"></i>Leave Queue</a>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-lg shadow-sm" disabled title="You have another active booking">Join Queue</button>
+                                    <div class="form-text">You are already in a queue for another service.</div>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'join_queue' service.id %}" class="btn btn-warning btn-lg fw-bold text-dark shadow-sm"><i class="fas fa-hourglass-start me-2"></i>Join Queue</a>
+                            {% endif %}
+                        {% elif user.is_authenticated %}
+                             <button class="btn btn-secondary btn-lg shadow-sm" disabled>Shopkeepers can't join</button>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-lg shadow-sm"><i class="fas fa-sign-in-alt me-2"></i>Login to Join Queue</a>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Salon Info -->
+                    <div class="d-flex align-items-center">
+                        {% if service.salon.salon_image %}
+                        <img src="{{ service.salon.salon_image.url }}" alt="{{ service.salon.salon_name }}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-0 fw-bold">{{ service.salon.salon_name }}</h5>
+                            <p class="text-muted mb-0"><i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ service.salon.location_text }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

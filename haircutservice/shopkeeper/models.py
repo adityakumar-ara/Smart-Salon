@@ -55,6 +55,7 @@ class SalonService(models.Model):
     name = models.CharField(max_length=100)  
     image = models.ImageField(upload_to='service_images/')
     price = models.IntegerField()
+    is_active = models.BooleanField(default=True)
     target_gender = models.CharField(
         max_length=10, 
         choices=GENDER_CHOICES, 
