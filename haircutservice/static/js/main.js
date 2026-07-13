@@ -1,9 +1,3 @@
-// const profile = document.querySelector(".static-profile");
-
-// profile.addEventListener("mouseover", function () {
-//     document.querySelector('.alert').innerHTML="Plz SingUp and Login ";
-// });
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const profiles = document.querySelectorAll('.static-profile, .profile');
@@ -22,4 +16,23 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 2000);
         });
     });
+});
+
+// <!-- signup form  -->
+const form = document.getElementById("signupForm");
+
+form.addEventListener("submit", function (e) {
+
+    const phone = document.getElementById("phonenumber").value;
+    const errorBox = document.getElementById("jsPasswordError");
+
+    if (!/^\d{10}$/.test(phone)) {
+        e.preventDefault(); // Form submit hone se rok dega
+
+        errorBox.classList.remove("d-none");
+        errorBox.innerText = "Mobile number must be exactly 10 digits.";
+        return;
+    }
+
+    errorBox.classList.add("d-none");
 });

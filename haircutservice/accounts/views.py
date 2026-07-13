@@ -17,7 +17,9 @@ def SignUp(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         role = request.POST.get('role')
-
+        if len(mobile) != 10 or not mobile.isdigit():
+            messages.error(request," Phone number Must be 10 Digits.")
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
         if password != confirm_password:
             messages.error(request, "Passwords do not match. Please try again.")
             return redirect(request.META.get('HTTP_REFERER', 'home'))
