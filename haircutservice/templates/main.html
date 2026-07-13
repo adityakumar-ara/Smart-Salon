@@ -112,19 +112,17 @@
 
     <!-- Profile ya dukan dekhne ka button -->
     {% if user.is_authenticated %}
-    <a href="{% url 'profile' %}"
-      ><img
-        src="https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png"
-        alt="profile"
-        class="profile"
-    /></a>
+    <a href="{% url 'profile' %}">
+      {% if user.image %}
+    <img src="{{ user.image.url }}" alt="profile" class="profile rounded-circle"/>
+      {% else %}
+      <img src="https://www.pngall.com/wp-content/uploads/5/-Avatar-PNG.png" alt="profile" class="profile"/>
+      {% endif %}
+    </a>
     {% else %}
-    <img
-      src="https://tse4.mm.bing.net/th/id/OIP.rduejmRCM5bT5oa59AxaWwHaHa?r=0&pid=Api&P=0&h=180"
-      alt="profile"
-      class="static-profile"
-      style="border-radius: 50px"
-    />
+   <a  class="px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <img src="../static/assest/staticprofilepicture.jpg" alt="profile" class="static-profile" style="border-radius: 50px"/>
+              </a>
     {% endif %}
     <!-- footer section -->
     <footer class="site-footer">
@@ -198,28 +196,18 @@
               {% csrf_token %}
               <div class="mb-3">
                 <label for="name" class="form-label">USer name</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id=""
-                  name="username"
-                  required
-                />
+                <input type="text" class="form-control" id="" name="username" required/>
               </div>
               <div class="mb-3">
                 <label for="loginPassword" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="loginPassword"
-                  name="password"
-                  required
-                />
+                <input type="password" class="form-control" id="loginPassword" name="password" required/>
               </div>
               <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Login</button>
               </div>
             </form>
+            <strong>Are you new User ?</strong><a href="#" class=" px-4" data-bs-toggle="modal" data-bs-target="#signupModal" >Signup</a
+              >
           </div>
         </div>
       </div>
@@ -309,6 +297,7 @@
               <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Signup</button>
               </div>
+              <strong>Have You account ? </strong> <a href="#" class=" px-4" data-bs-toggle="modal" data-bs-target="#loginModal" >Login</a>
             </form>
           </div>
         </div>

@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .models import CustomUser
-from shopkeeper.models import Salon
+from shopkeeper.models import Salon, SiderImage, QueueEntry
 
 User = get_user_model()
 
@@ -67,8 +67,23 @@ def login(request):
             messages.error(request, "Invalid Username or Password. Please try again.")
             return redirect('home')
 
-    salons = Salon.objects.all()
-    return render(request, 'home.html', {'salons': salons})
+    all_salons = Salon.objects.all()
+    has_salon = False
+    if request.user.is_authenticated:
+        has_salon = Salon.objects.filter(owner=request.user).exists()
+
+    slider_images = SiderImage.objects.exclude(image__isnull=True).exclude(image__exact='')
+    user_queue_ids = []
+    if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
+        user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
+
+    context = {
+        'salons': all_salons,
+        'user_queue_ids': user_queue_ids,
+        "slide_image" : slider_images,
+        "has_salon": has_salon,
+    }
+    return render(request, 'home.html', context)
 
 @login_required(login_url='login')
 def logout_user (request):
