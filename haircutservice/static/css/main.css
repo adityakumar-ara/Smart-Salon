@@ -20,7 +20,29 @@
 body{
     margin-top: 90px;
 }
-.profile {
+
+/* Reverted custom .alert styles to use Bootstrap defaults */
+
+
+/* Styles for small transient alert box shown on profile hover */
+.alert_box {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    pointer-events: none;
+}
+
+
+.profile,
+.static-profile{
     position: fixed; 
     height: 100px;
     width: 100px;
@@ -54,4 +76,11 @@ body{
 @media (max-width: 576px){
     .site-footer .row{ gap: 12px; }
     .profile{ height:80px; width:80px; right:12px; bottom:12px; }
+    .navbar-nav{
+               gap: 10px !important;
+               background-color: transparent !important;
+    }
+    .nav-link {
+     background:none !important;
+    }
 }

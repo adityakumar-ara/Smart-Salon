@@ -50,6 +50,10 @@ def opensalon(request):
 
 def home(request):
     all_salons = Salon.objects.all()
+    has_salon = False
+    if request.user.is_authenticated:
+        has_salon = Salon.objects.filter(owner=request.user).exists()
+
     # Improvement: Only fetch slider images that actually have an image file.
     slider_images = SiderImage.objects.exclude(image__isnull=True).exclude(image__exact='')
     user_queue_ids = []
@@ -60,6 +64,7 @@ def home(request):
         'salons': all_salons,
         'user_queue_ids': user_queue_ids,
         "slide_image" : slider_images,
+        "has_salon": has_salon,
     }
     return render(request, 'home.html', context)
 

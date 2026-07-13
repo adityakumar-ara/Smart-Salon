@@ -14,10 +14,14 @@
                     <h4 class="mb-0">My Profile</h4>
                 </div>
                 <div class="parent-badge">
+                    {% if user.is_authenticated and user.is_shopkeeper %}
                     <a href="{% url 'add_service' %}" class="text-decoration-none"><span
                             class="badge text-bg-secondary ">Add Services</span></a>
+                    {% endif %}        
+                    {% if user.is_authenticated and user.is_shopkeeper %}
                             <a href="{% url 'service_views' %}"
                         class="text-decoration-none "><span class="badge text-bg-secondary ">Views Service </span></a>
+                    {% endif %}
                 </div>
             
                 <!-- Maine yahan se FOR loop hata diya hai -->

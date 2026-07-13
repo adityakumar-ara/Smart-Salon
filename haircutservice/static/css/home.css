@@ -55,16 +55,61 @@ body {
     font-size: clamp(2rem, 5vw, 4rem);
 }
 
+.hero-card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,0.92);
+    padding: 2rem;
+    border-radius: 32px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.08);
+}
+
+.hero-subtitle {
+    max-width: 620px;
+    color: #444;
+    line-height: 1.8;
+}
+
 .hero-btn {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 300px;
+    width: 100%;
+    max-width: 520px;
+    align-items: flex-start;
+}
+
+.hero-btn a {
+    min-width: 220px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.hero-btn a:hover,
+.hero-btn a:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.15);
+    filter: brightness(1.02);
+}
+
+.hero-btn a:focus-visible {
+    outline: 3px solid rgba(255, 193, 7, 0.6);
+    outline-offset: 4px;
+}
+
+.hero-btn .btn-warning {
+    padding: 1rem 2.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.hero-btn .btn-outline-dark {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .hero-btn a:nth-child(1) {
-    width: 300px;
-
+    width: auto;
 }
 
 
@@ -102,7 +147,7 @@ body {
 
 @media (min-width: 768px) {
     .hero-card {
-        margin-top: -250px;
+        margin-top:0px;
     }
 
     .hero-btn {

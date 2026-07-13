@@ -9,3 +9,8 @@ Bug Fix Summary:
 Notes:
 - The `main.html` login/signup modal routes are now aligned with the account URL configuration.
 - Existing template route name references remain unchanged and continue working with the fixed URL names.
+
+
+ <!-- {% if user.is_authenticated == Shopkeeper %}
+
+            <a href="#" class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#salonModal">Open Dukan</a> -->

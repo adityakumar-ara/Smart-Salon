@@ -11,27 +11,24 @@ User = get_user_model()
 
 def SignUp(request):
     if request.method == 'POST':
-       
         username = request.POST.get('username')
         name = request.POST.get('name')
         mobile = request.POST.get('mobile')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         role = request.POST.get('role')
-        
+
         if password != confirm_password:
-            messages.error(request, "password and conformpasswprd must be same.!")
-            return redirect(request.META.get('HTTP_REFERER', '/'))
-        
+            messages.error(request, "Passwords do not match. Please try again.")
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
         # 2. Username check
         if User.objects.filter(username=username).exists():
-            
-            messages.error(request, "User already Exissts")
-            return redirect(request.META.get('HTTP_REFERER', '/'))
+            messages.error(request, f"Username '{username}' is already taken. Please choose another one.")
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
 
         # 3. Customer Creation
         if role == "customer":
-            print("⏳ Customer account ban raha hai...")
             User.objects.create_user(
                 username=username,
                 name=name,
@@ -39,13 +36,10 @@ def SignUp(request):
                 password=password,
                 is_customer=True,
             )
-            
-           
-            messages.success(request, f"Customer account successfully , {name}! you can login ")
+            messages.success(request, f"Customer account for {name} created successfully! You can now log in.")
 
         # 4. Shopkeeper Creation
         elif role == "shopkeeper":
-           
             User.objects.create_user(
                 username=username,
                 name=name,
@@ -53,14 +47,11 @@ def SignUp(request):
                 password=password,
                 is_shopkeeper=True
             )
-          
-            
-            messages.success(request, f"Shopkeeper account successfully , {name}! you can login. ")
-      
-            
-        return redirect('login') 
-        
-    return render(request, 'accounts/signup.html')
+            messages.success(request, f"Shopkeeper account for {name} created successfully! You can now log in.")
+
+        return redirect('login')
+
+    return redirect('home')
 
 def login(request):
     if request.method == "POST":
@@ -85,7 +76,7 @@ def logout_user (request):
     messages.info(request, "you have  been logged out")
     return redirect('login')
 
-@login_required(login_url='login')
+@login_required
 def profile(request):
     context = {
         'current_user': request.user
