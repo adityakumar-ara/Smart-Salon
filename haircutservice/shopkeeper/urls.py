@@ -15,5 +15,7 @@ urlpatterns = [
     path('leave_queue/<int:service_id>/', views.leave_queue, name='leave_queue'),
     path('accept_order/<int:entry_id>/', views.accept_order, name='accept_order'),
     path('cancel_order/<int:entry_id>/', views.cancel_order, name='cancel_order'),
+    path('complete_order/<int:entry_id>/', views.complete_order, name='complete_order'),
+    path('my-booking/', views.my_booking, name='my_booking'),
     path('aboutservice/<int:service_id>/', views.about_service_page, name='about_service_page'),
 ]

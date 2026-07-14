@@ -1,6 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-    const profiles = document.querySelectorAll('.static-profile, .profile');
+    const profiles = document.querySelectorAll('.static-profile');
     if (!profiles || profiles.length === 0) return;
 
     profiles.forEach(function (profile) {

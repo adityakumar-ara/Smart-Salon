@@ -23,6 +23,21 @@
             <hr>
             {% endif %}
 
+            {% if current_booking and current_booking.salon.id == salon.id %}
+            <div class="alert {% if current_booking.status == 'waiting' %}alert-warning{% else %}alert-success{% endif %} border shadow-sm rounded-3">
+                <h5 class="alert-heading mb-2"><i class="bi bi-ticket-perforated me-2"></i>Your booking status</h5>
+                <strong>{{ current_booking.service.name }}</strong> —
+                {% if current_booking.status == 'waiting' %}
+                    <span class="badge bg-warning text-dark">Waiting</span>
+                    <div class="mt-2">Your queue number is <strong>#{{ current_booking.position }}</strong>. <strong>{{ current_booking.people_before }}</strong> customer{{ current_booking.people_before|pluralize }} ahead of you.</div>
+                {% else %}
+                    <span class="badge bg-success">Accepted</span>
+                    <div class="mt-2">The shopkeeper has accepted your booking. <strong>{{ current_booking.accepted_people_ahead }}</strong> accepted customer{{ current_booking.accepted_people_ahead|pluralize }} ahead of you.</div>
+                {% endif %}
+                <a href="{% url 'my_booking' %}" class="btn btn-sm btn-outline-dark mt-3">View full booking status</a>
+            </div>
+            {% endif %}
+
             <!-- Gallery Slider -->
             {% if gallery_images %}
             <h3 class="fw-bold mb-3">Gallery</h3>
@@ -64,7 +79,12 @@
                         {% elif user.is_authenticated %}
                              <button class="btn btn-secondary btn-sm" disabled>Shopkeepers can't join</button>
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login to Join</a>
+                            <a
+                href="#"
+                class="btn btn-outline-primary px-4"
+                data-bs-toggle="modal"
+                data-bs-target="#loginModal"
+                >Login & Join </a>
                         {% endif %}
                         <a href="{% url 'about_service_page' service.id %}" class="btn btn-outline-warning">Views Service</a>
                     </div>

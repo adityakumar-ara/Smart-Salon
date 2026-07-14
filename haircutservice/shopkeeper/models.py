@@ -89,6 +89,22 @@ class QueueEntry(models.Model):
             return None
         return self.salon.queue_entries.filter(status='waiting', created_at__lt=self.created_at).count() + 1
 
+    @property
+    def people_before(self):
+        """Active customers who joined the queue before this customer."""
+        return self.salon.queue_entries.filter(
+            status__in=['waiting', 'seated'],
+            created_at__lt=self.created_at,
+        ).count()
+
+    @property
+    def accepted_people_ahead(self):
+        """Accepted customers ahead of this customer in the service queue."""
+        return self.salon.queue_entries.filter(
+            status='seated',
+            created_at__lt=self.created_at,
+        ).count()
+
     def __str__(self):
         service_name = self.service.name if self.service else 'No Service'
         return f"{self.customer.username} for {service_name} in {self.salon.salon_name} [{self.status}]"

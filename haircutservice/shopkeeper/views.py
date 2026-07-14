@@ -78,7 +78,7 @@ def salon_detail_public(request, salon_id):
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
         user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
-        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service').first()
+        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
 
     context = {
         'salon': salon,
@@ -127,6 +127,8 @@ def leave_queue(request, service_id):
 
 @login_required(login_url='login')
 def accept_order(request, entry_id):
+    if request.method != 'POST':
+        return redirect('salon_detail')
     entry = get_object_or_404(QueueEntry, id=entry_id, salon__owner=request.user)
     if entry.status != 'waiting':
         messages.info(request, 'This order cannot be accepted because it is not waiting.')
@@ -139,14 +141,39 @@ def accept_order(request, entry_id):
 
 @login_required(login_url='login')
 def cancel_order(request, entry_id):
+    if request.method != 'POST':
+        return redirect('salon_detail')
     entry = get_object_or_404(QueueEntry, id=entry_id, salon__owner=request.user)
     if entry.status not in ['waiting', 'seated']:
         messages.info(request, 'This order cannot be cancelled.')
         return redirect('salon_detail')
     entry.status = 'cancelled'
     entry.save()
-    messages.success(request, f'Booking for {entry.customer.username} has been cancelled.')
+    messages.success(request, f'Booking for {entry.customer.username} has been rejected.')
     return redirect('salon_detail')
+
+
+@login_required(login_url='login')
+def complete_order(request, entry_id):
+    if request.method != 'POST':
+        return redirect('salon_detail')
+    entry = get_object_or_404(QueueEntry, id=entry_id, salon__owner=request.user)
+    if entry.status != 'seated':
+        messages.info(request, 'Only an accepted booking can be marked complete.')
+        return redirect('salon_detail')
+    entry.status = 'completed'
+    entry.save()
+    messages.success(request, f'Service for {entry.customer.username} marked as completed.')
+    return redirect('salon_detail')
+
+
+@login_required(login_url='login')
+def my_booking(request):
+    if not hasattr(request.user, 'is_customer') or not request.user.is_customer:
+        messages.error(request, 'Only customers can view booking status.')
+        return redirect('home')
+    booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('salon', 'service').first()
+    return render(request, 'shopkeeper/my_booking.html', {'booking': booking})
 
 
 @login_required(login_url='login')
@@ -316,7 +343,7 @@ def male_section(request):
     male_service = SalonService.objects.filter(target_gender__in=['male', 'unisex'])
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
-        current_booking = QueueEntry.objects.filter(customer=request.user, status='waiting').select_related('service').first()
+        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
     context = {
         'services': male_service,
         'current_booking': current_booking,
@@ -327,7 +354,7 @@ def female_section(request):
     female_service = SalonService.objects.filter(target_gender__in=['female', 'unisex'])
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
-        current_booking = QueueEntry.objects.filter(customer=request.user, status='waiting').select_related('service').first()
+        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
     context = {
         'services': female_service,
         'current_booking': current_booking,
@@ -338,7 +365,7 @@ def about_service_page(request,service_id):
     service_data = get_object_or_404(SalonService, id=service_id, is_active = True)
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
-        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service').first()
+        current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
 
     context = {
         'service':service_data,

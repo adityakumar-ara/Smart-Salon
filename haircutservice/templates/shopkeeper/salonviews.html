@@ -63,6 +63,7 @@
                             <th>#</th>
                             <th>Customer</th>
                             <th>Service</th>
+                            <th>Queue no.</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -73,13 +74,29 @@
                             <td>{{ forloop.counter }}</td>
                             <td>{{ entry.customer.username }}</td>
                             <td>{% if entry.service %}{{ entry.service.name }}{% else %}General{% endif %}</td>
-                            <td class="text-capitalize">{{ entry.status }}</td>
+                            <td>{% if entry.status == 'waiting' %}{{ entry.position }}{% else %}—{% endif %}</td>
                             <td>
                                 {% if entry.status == 'waiting' %}
-                                <a href="{% url 'accept_order' entry.id %}" class="btn btn-success btn-sm me-2">Accept</a>
-                                <a href="{% url 'cancel_order' entry.id %}" class="btn btn-danger btn-sm">Cancel</a>
+                                <span class="badge bg-warning text-dark">Waiting</span>
+                                {% else %}
+                                <span class="badge bg-success">Accepted / Seated</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if entry.status == 'waiting' %}
+                                <form method="post" action="{% url 'accept_order' entry.id %}" class="d-inline">
+                                    {% csrf_token %}<button type="submit" class="btn btn-success btn-sm me-1">Accept</button>
+                                </form>
+                                <form method="post" action="{% url 'cancel_order' entry.id %}" class="d-inline" onsubmit="return confirm('Reject this booking?');">
+                                    {% csrf_token %}<button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                                </form>
                                 {% elif entry.status == 'seated' %}
-                                <a href="{% url 'cancel_order' entry.id %}" class="btn btn-danger btn-sm">Cancel</a>
+                                <form method="post" action="{% url 'complete_order' entry.id %}" class="d-inline">
+                                    {% csrf_token %}<button type="submit" class="btn btn-primary btn-sm me-1">Complete</button>
+                                </form>
+                                <form method="post" action="{% url 'cancel_order' entry.id %}" class="d-inline" onsubmit="return confirm('Reject this accepted booking?');">
+                                    {% csrf_token %}<button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                                </form>
                                 {% else %}
                                 <span class="text-muted">No actions</span>
                                 {% endif %}

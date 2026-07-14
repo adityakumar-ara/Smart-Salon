@@ -1,0 +1,42 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container my-5" style="max-width: 760px;">
+    <h1 class="fw-bold mb-4">My Booking Status</h1>
+    {% if booking %}
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-4 p-md-5">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <h3 class="mb-1">{{ booking.salon.salon_name }}</h3>
+                    <p class="text-muted mb-0">{{ booking.service.name }} · ₹{{ booking.service.price }}</p>
+                </div>
+                {% if booking.status == 'waiting' %}<span class="badge bg-warning text-dark fs-6">Waiting</span>{% else %}<span class="badge bg-success fs-6">Accepted</span>{% endif %}
+            </div>
+            {% if booking.status == 'waiting' %}
+            <div class="rounded-3 bg-warning-subtle p-4 mb-4 text-center">
+                <div class="text-muted text-uppercase small fw-bold">Your queue number</div>
+                <div class="display-3 fw-bold">#{{ booking.position }}</div>
+                <p class="mb-0"><strong>{{ booking.people_before }}</strong> customer{{ booking.people_before|pluralize }} ahead of you.</p>
+            </div>
+            <p class="text-muted">You are waiting for the shopkeeper to accept your booking. Your number updates as the queue moves.</p>
+            <a href="{% url 'leave_queue' booking.service.id %}" class="btn btn-outline-danger" onclick="return confirm('Leave this queue?');">Leave Queue</a>
+            {% else %}
+            <div class="rounded-3 bg-success-subtle p-4 mb-4">
+                <h4 class="text-success">Your booking is accepted</h4>
+                <p class="mb-0">The shopkeeper has accepted your booking. <strong>{{ booking.accepted_people_ahead }}</strong> accepted customer{{ booking.accepted_people_ahead|pluralize }} ahead of you.</p>
+            </div>
+            {% endif %}
+            <a href="{% url 'salon_detail_public' booking.salon.id %}" class="btn btn-primary">View Salon</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="card border-0 shadow-sm rounded-4 text-center p-5">
+        <i class="bi bi-calendar-x display-4 text-muted mb-3"></i>
+        <h3>No active booking</h3>
+        <p class="text-muted">When you join a salon queue, your live status will appear here.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary">Explore Salons</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
