@@ -8,6 +8,12 @@ if (signupForm) {
         const errorBox = document.getElementById('jsPasswordError');
 
         // Validate password confirmation
+        if (password.length < 10) {
+            event.preventDefault();
+            errorBox.textContent = "Password must be at least 10 characters long.";
+            errorBox.classList.remove('d-none');
+            return;
+        }
         if (password !== confirmPassword) {
             event.preventDefault();
             errorBox.textContent = "Password and confirm password must be the same!";
