@@ -89,7 +89,7 @@
                 data-bs-target="#salonModal"
                 >Open Dukan</a
               >
-              {% endif %} 
+              {% endif %}
             </li>
             <li class="nav-item mx-2">
               {% if user.is_authenticated %}
@@ -131,32 +131,34 @@
     <div class="container-fluid p-0">{% block content %} {% endblock %}</div>
 
     <!-- Profile ya dukan dekhne ka button -->
-    {% if user.is_authenticated %}
-    <a href="{% url 'profile' %}">
-      {% if user.image %}
-      <img
-        src="{{ user.image.url }}"
-        alt="profile"
-        class="profile rounded-circle"
-      />
+    <div class="d-none d-md-block">
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}">
+        {% if user.image %}
+        <img
+          src="{{ user.image.url }}"
+          alt="profile"
+          class="profile rounded-circle"
+        />
+        {% else %}
+        <img
+          src="../static/assest/staticprofilepicture.jpg"
+          alt="profile"
+          class="profile rounded-circle"
+        />
+        {% endif %}
+      </a>
       {% else %}
-      <img
-        src="../static/assest/staticprofilepicture.jpg"
-        alt="profile"
-        class="profile rounded-circle"
-      />
+      <a class="px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
+        <img
+          src="../static/assest/staticprofilepicture.jpg"
+          alt="profile"
+          class="static-profile"
+          style="border-radius: 50px"
+        />
+      </a>
       {% endif %}
-    </a>
-    {% else %}
-    <a class="px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
-      <img
-        src="../static/assest/staticprofilepicture.jpg"
-        alt="profile"
-        class="static-profile"
-        style="border-radius: 50px"
-      />
-    </a>
-    {% endif %}
+    </div>
     <!-- footer section -->
     <footer class="site-footer">
       <div class="footer-top container">
