@@ -17,8 +17,24 @@
     z-index: 1000;
     background-color: white;
 }
+
+.profile-nav-link{
+    color: #212529;
+    font-size: 1.9rem;
+    line-height: 1;
+    padding: 0.2rem;
+    text-decoration: none;
+}
+
+.profile-nav-link:hover{
+    color: #dc3545;
+}
 body{
     margin-top: 90px;
+}
+
+.mobile-secondary-navbar{
+    display: none;
 }
 
 /* Reverted custom .alert styles to use Bootstrap defaults */
@@ -40,16 +56,6 @@ body{
     pointer-events: none;
 }
 
-
-.profile,
-.static-profile{
-    position: fixed; 
-    height: 100px;
-    width: 100px;
-    right: 20px; 
-    bottom: 20px;
-    z-index: 999;
-}
 
 /* Footer styles */
 .site-footer{
@@ -74,8 +80,66 @@ body{
 .site-footer .footer-bottom{ padding-top:16px; border-top:1px solid rgba(255,255,255,0.05); margin-top:12px; font-size:14px; }
 
 @media (max-width: 576px){
+    body{
+        margin-top: 104px;
+    }
+    .custom-navbar{
+        min-height: 52px;
+        padding: 0 12px !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #2874f0;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+    .custom-navbar .container-fluid{
+        min-height: 52px;
+        padding: 0;
+    }
+    .custom-navbar .navbar-brand{
+        margin: 0;
+        color: #fff;
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+    .profile-nav-link,
+    .profile-nav-link:hover{
+        padding: 0;
+        color: #fff;
+        font-size: 1.5rem;
+    }
+    .mobile-secondary-navbar{
+        position: fixed;
+        top: 52px;
+        left: 0;
+        z-index: 999;
+        display: flex;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 0;
+        overflow-x: auto;
+        padding: 0 6px;
+        background: #fff;
+        border-bottom: 1px solid #dee2e6;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        transition: transform 0.25s ease;
+    }
+    .mobile-secondary-navbar.navbar-hidden{
+        transform: translateY(-100%);
+    }
+    .mobile-secondary-navbar a{
+        display: block;
+        padding: 12px 10px 10px;
+        color: #212121;
+        text-decoration: none;
+        white-space: nowrap;
+        font-size: 0.82rem;
+        font-weight: 500;
+    }
+    .mobile-secondary-navbar a:first-child{
+        color: #2874f0;
+        border-bottom: 2px solid #2874f0;
+    }
     .site-footer .row{ gap: 12px; }
-    .profile{ height:80px; width:80px; right:12px; bottom:12px; }
     .navbar-nav{
                gap: 10px !important;
                background-color: transparent !important;

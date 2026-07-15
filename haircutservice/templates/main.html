@@ -20,27 +20,20 @@
   </head>
 
   <body>
-    <nav
-      class="navbar navbar-expand-lg custom-navbar px-4 border border-dark rounded shadow-lg"
-    >
-      <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg custom-navbar px-4 border border-dark rounded shadow-lg">
+      <div class="container-fluid mobilesize">
         <a class="navbar-brand logo-text" href="{% url 'home' %}"
-          >Royal Salon</a
-        >
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
+          ><img src="../static/assest/Gemini_Generated_Image_4g5i9v4g5i9v4g5i-removebg-preview (1).png" alt="Royal Salon" style="height: 25PX; width: 100px;"></a>
+        {% if user.is_authenticated %}
+        <a class="profile-nav-link" href="{% url 'profile' %}" aria-label="Open profile">
+          <i class="bi bi-person-circle" aria-hidden="true"></i>
+        </a>
+        {% else %}
+        <button type="button" class="profile-nav-link border-0 bg-transparent" data-bs-toggle="modal" data-bs-target="#loginModal" aria-label="Log in">
+          <i class="bi bi-person-circle" aria-hidden="true"></i>
         </button>
-
-        <div
-          class="collapse navbar-collapse justify-content-end"
-          id="navbarNav"
-        >
-          <hr />
+        {% endif %}
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav align-items-start">
             <li class="nav-item mx-2">
               <a class="nav-link active" href="{% url 'home' %}">Home</a>
@@ -110,6 +103,14 @@
         </div>
       </div>
     </nav>
+
+    <nav id="secondaryNavbar" class="mobile-secondary-navbar d-lg-none">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'male_section' %}">Male</a>
+      <a href="{% url 'female_section' %}">Female</a>
+      <a href="#">Services</a>
+      <a href="#">Contact</a>
+    </nav>
     {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}
@@ -159,6 +160,7 @@
       </a>
       {% endif %}
     </div>
+
     <!-- footer section -->
     <footer class="site-footer">
       <div class="footer-top container">
@@ -517,74 +519,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-      // document.addEventListener("DOMContentLoaded", function () {
-      //   // Page load hote hi Login Modal trigger hoga
-      //   var loginModalElement = document.getElementById('loginModal');
-      //   var loginModal = new bootstrap.Modal(loginModalElement);
-      //   loginModal.show();
-      // });
-
-      async function getShopGPS() {
-        const statusEl = document.getElementById("locationStatus");
-        const addressInput = document.getElementById("id_address");
-        const latInput = document.getElementById("id_latitude");
-        const lngInput = document.getElementById("id_longitude");
-
-        if (!navigator.geolocation) {
-          alert("Your browser does not support GPS.");
-          return;
-        }
-
-        statusEl.textContent = "Detecting your location...";
-        addressInput.value = "";
-
-        navigator.geolocation.getCurrentPosition(
-          async function (position) {
-            let lat = position.coords.latitude;
-            let lng = position.coords.longitude;
-
-            latInput.value = lat;
-            lngInput.value = lng;
-
-            try {
-              const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&addressdetails=1`,
-                {
-                  headers: {
-                    Accept: "application/json",
-                  },
-                },
-              );
-
-              if (!response.ok) {
-                throw new Error("Reverse geocoding failed");
-              }
-
-              const data = await response.json();
-              const address = data.display_name || "";
-              addressInput.value = address;
-              statusEl.textContent = address
-                ? "Address auto-filled successfully."
-                : "Location detected, but address lookup returned no address.";
-            } catch (error) {
-              console.error(error);
-              statusEl.textContent =
-                "Coordinates detected, but address lookup failed. Please try again.";
-            }
-          },
-          function (error) {
-            statusEl.textContent =
-              "Unable to detect location. Please enable location services in your browser.";
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0,
-          },
-        );
-      }
-    </script>
     <script src="{% static 'js/signup.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
   </body>
