@@ -145,21 +145,12 @@
           class="profile rounded-circle"
         />
         {% else %}
-        <img
-          src="{ static 'assest/staticprofilepicture.png'}"
-          alt="profile"
-          class="profile rounded-circle"
-        />
+        <img src="{% static 'assest/profile.png' %}" alt="profile" class="static-profile" ... />
         {% endif %}
       </a>
       {% else %}
       <a class="px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
-        <img
-        src="{ static 'assest/staticprofilepicture.png'}"
-          alt="profile"
-          class="static-profile"
-          style="border-radius: 50px"
-        />
+       <img src="{% static 'assest/profile.png' %}" alt="profile" class="static-profile rounded-circle" ... />
       </a>
       {% endif %}
     </div>
