@@ -1,59 +1,169 @@
-from django.shortcuts import render, redirect, get_object_or_404
+import random
+
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.core.mail import send_mail
+from django.shortcuts import redirect, render, get_object_or_404
+from shopkeeper.models import QueueEntry, Salon, SiderImage
+
 from .models import CustomUser
-from shopkeeper.models import Salon, SiderImage, QueueEntry
 
 User = get_user_model()
 
+
+def _generate_otp():
+    return str(random.randint(100000, 999999))
+
+
+def _send_otp_email(request, to_email, subject, message):
+    try:
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [to_email], fail_silently=False)
+        return True, None
+    except Exception as exc:
+        request.session['email_delivery_error'] = str(exc)
+        return False, str(exc)
+
+
+def _clear_signup_session(request):
+    request.session.pop('pending_signup', None)
+    request.session.pop('signup_verification_otp', None)
+    request.session.pop('signup_welcome_otp', None)
+    request.session.pop('signup_step', None)
+
+
 def SignUp(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        name = request.POST.get('name')
-        mobile = request.POST.get('mobile')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        if 'otp' in request.POST:
+            return verify_otp(request)
+
+        username = (request.POST.get('username') or '').strip()
+        name = (request.POST.get('name') or '').strip()
+        mobile = (request.POST.get('mobile') or '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
         role = request.POST.get('role')
-        if len(mobile) != 10 or not mobile.isdigit():
-            messages.error(request," Phone number Must be 10 Digits.")
-            return redirect(request.META.get('HTTP_REFERER', 'home'))
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match. Please try again.")
+        email = (request.POST.get('email') or '').strip()
+
+        if not email:
+            messages.error(request, 'Email is required.')
             return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-        # 2. Username check
+        if len(mobile) != 10 or not mobile.isdigit():
+            messages.error(request, 'Phone number must be 10 digits.')
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match. Please try again.')
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
         if User.objects.filter(username=username).exists():
             messages.error(request, f"Username '{username}' is already taken. Please choose another one.")
             return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-        # 3. Customer Creation
-        if role == "customer":
-            User.objects.create_user(
-                username=username,
-                name=name,
-                mobile=mobile,
-                password=password,
-                is_customer=True,
-            )
-            messages.success(request, f"Customer account for {name} created successfully! You can now log in.")
+        if User.objects.filter(email=email).exists():
+            messages.error(request, f"Email '{email}' is already registered.")
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
 
-        # 4. Shopkeeper Creation
-        elif role == "shopkeeper":
-            User.objects.create_user(
-                username=username,
-                name=name,
-                mobile=mobile,
-                password=password,
-                is_shopkeeper=True
-            )
-            messages.success(request, f"Shopkeeper account for {name} created successfully! You can now log in.")
+        pending_signup = {
+            'username': username,
+            'name': name,
+            'mobile': mobile,
+            'password': password,
+            'role': role,
+            'email': email,
+        }
+        verification_otp = _generate_otp()
+        request.session['pending_signup'] = pending_signup
+        request.session['signup_verification_otp'] = verification_otp
+        request.session['signup_step'] = 'verify_email'
 
-        return redirect('login')
+        email_sent, email_error = _send_otp_email(
+            request,
+            email,
+            'Email verification OTP',
+            f'Hello {name or username},\n\nYour email verification OTP: {verification_otp}\n\nUse it to verify your email address.',
+        )
 
+        return render(request, 'accounts/signup.html', {
+            'message': 'Enter the email verification OTP',
+            'email': email,
+            'otp_stage': 'verify_email',
+            'email_sent': email_sent,
+            'email_error': email_error,
+            'debug_otp': verification_otp if not email_sent else None,
+        })
+
+    return render(request, 'accounts/signup.html', {'otp_stage': 'signup'})
+
+
+def verify_otp(request):
+    if request.method != 'POST':
+        return redirect('home')
+
+    pending_signup = request.session.get('pending_signup')
+    if not pending_signup:
+        messages.error(request, 'Signup session expired. Please try again.')
+        return redirect('home')
+
+    otp_value = (request.POST.get('otp') or '').strip()
+    step = request.session.get('signup_step')
+
+    if step == 'verify_email':
+        expected_otp = request.session.get('signup_verification_otp')
+        if otp_value != expected_otp:
+            return render(request, 'accounts/signup.html', {
+                'message': 'Invalid email verification OTP. Please try again.',
+                'email': pending_signup['email'],
+                'otp_stage': 'verify_email',
+            })
+
+        welcome_otp = _generate_otp()
+        request.session['signup_welcome_otp'] = welcome_otp
+        request.session['signup_step'] = 'welcome'
+        email_sent, email_error = _send_otp_email(
+            request,
+            pending_signup['email'],
+            'Welcome OTP',
+            f'Hello {pending_signup["name"] or pending_signup["username"]},\n\nWelcome OTP: {welcome_otp}\n\nUse it to complete your signup.',
+        )
+        return render(request, 'accounts/signup.html', {
+            'message': 'Welcome OTP',
+            'email': pending_signup['email'],
+            'otp_stage': 'welcome',
+            'email_sent': email_sent,
+            'email_error': email_error,
+            'debug_otp': welcome_otp if not email_sent else None,
+        })
+
+    if step == 'welcome':
+        expected_otp = request.session.get('signup_welcome_otp')
+        if otp_value != expected_otp:
+            return render(request, 'accounts/signup.html', {
+                'message': 'Invalid welcome OTP. Please try again.',
+                'email': pending_signup['email'],
+                'otp_stage': 'welcome',
+            })
+
+        user = User.objects.create_user(
+            username=pending_signup['username'],
+            email=pending_signup['email'],
+            password=pending_signup['password'],
+            name=pending_signup['name'],
+            mobile=pending_signup['mobile'],
+            is_customer=pending_signup['role'] == 'customer',
+            is_shopkeeper=pending_signup['role'] == 'shopkeeper',
+        )
+        _clear_signup_session(request)
+        auth_login(request, user)
+        messages.success(request, f'Welcome {user.username}! Your account has been created.')
+        return redirect('home')
+
+    messages.error(request, 'Signup flow is invalid.')
     return redirect('home')
+
 
 def login(request):
     if request.method == "POST":
