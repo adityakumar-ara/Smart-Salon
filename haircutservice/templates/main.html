@@ -1,519 +1,326 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Royal Salon</title>
-      
-    <link rel="icon" type="image/png" href="../static/assest/faveicon.png">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal Salon</title>
+
+  <link rel="icon" type="image/png" href="../static/assest/faveicon.png">
 </head>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
-    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
-    {% block extra_css %}{% endblock %}
-  </head>
+<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+{% block extra_css %}{% endblock %}
+</head>
 
-  <body>
-    <nav class="navbar navbar-expand-lg custom-navbar px-4 border border-dark rounded shadow-lg">
-      <div class="container-fluid mobilesize">
-        <a class="navbar-brand logo-text" href="{% url 'home' %}"
-          ><img src="{% static 'assest/logo.png' %}" alt="Royal Salon" style="height: 25PX; width: 100px;"></a>
-        {% if user.is_authenticated %}
-        <a class="profile-nav-link" href="{% url 'profile' %}" aria-label="Open profile">
-          <i class="bi bi-person-circle" aria-hidden="true"></i>
-        </a>
-        {% else %}
-        <button type="button" class="profile-nav-link border-0 bg-transparent" data-bs-toggle="modal" data-bs-target="#loginModal" aria-label="Log in">
-          <i class="bi bi-person-circle" aria-hidden="true"></i>
-        </button>
-        {% endif %}
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav align-items-start">
-            <li class="nav-item mx-2">
-              <a class="nav-link active" href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="nav-item mx-2">
-              <a class="nav-link" href="{% url 'male_section' %}">Male</a>
-            </li>
-            <li class="nav-item mx-2">
-              <a class="nav-link" href="{% url 'female_section' %}">Female</a>
-            </li>
-            <li class="nav-item mx-2">
-              <a class="nav-link" href="#">Services</a>
-            </li>
-            <li class="nav-item mx-2">
-              <a class="nav-link" href="#">Contact</a>
-            </li>
-
-            {% if user.is_authenticated and user.is_customer %}
-            <li class="nav-item mx-2">
-              <a class="btn btn-outline-primary" href="{% url 'my_booking' %}"
-                >My Booking</a
-              >
-            </li>
-            {% endif %}
-
-            <li class="nav-item mx-2">
-              <a
-                href="#"
-                class="btn btn-warning px-4"
-                data-bs-toggle="modal"
-                data-bs-target="#signupModal"
-                >Signup</a
-              >
-            </li>
-            <li class="nav-item mx-2">
-              {% if user.is_authenticated and user.is_shopkeeper %} {% if
-              has_salon %}
-              <a href="{% url 'salon_detail' %}" class="btn btn-success">
-                View Dukan</a
-              >
-              {% else %}
-              <a
-                href="#"
-                class="btn btn-warning px-4"
-                data-bs-toggle="modal"
-                data-bs-target="#salonModal"
-                >Open Dukan</a
-              >
-              {% endif %}
-            </li>
-            <li class="nav-item mx-2">
-              {% if user.is_authenticated %}
-              <a href="{% url 'logout' %}" class="btn btn-warning px-4"
-                >Logout</a
-              >
-              {% else %}
-              <a
-                href="#"
-                class="btn btn-outline-warning px-4"
-                data-bs-toggle="modal"
-                data-bs-target="#loginModal"
-                >Login</a
-              >
-              {% endif %}
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <nav id="secondaryNavbar" class="mobile-secondary-navbar d-lg-none">
-      <a href="{% url 'home' %}">Home</a>
-      <a href="{% url 'male_section' %}">Male</a>
-      <a href="{% url 'female_section' %}">Female</a>
-      <a href="#">Services</a>
-      <a href="#">Contact</a>
-    </nav>
-    {% if messages %}
-    <div class="container mt-3">
-      {% for message in messages %}
-      <div
-        class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %} alert-dismissible fade show shadow-sm"
-        role="alert"
-      >
-        {{ message }}
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
-    <div class="container-fluid p-0">{% block content %} {% endblock %}</div>
-
-    <!-- Profile ya dukan dekhne ka button -->
-    <div class="d-none d-md-block">
+<body>
+  <nav class="navbar navbar-expand-lg custom-navbar px-4 border border-dark rounded shadow-lg">
+    <div class="container-fluid mobilesize">
+      <a class="navbar-brand logo-text" href="{% url 'home' %}"><img src="{% static 'assest/logo.png' %}"
+          alt="Royal Salon" style="height: 25PX; width: 100px;"></a>
       {% if user.is_authenticated %}
-      <a href="{% url 'profile' %}">
-        {% if user.image %}
-        <img
-          src="{{ user.image.url }}"
-          alt="profile"
-          class="profile rounded-circle"
-        />
-        {% else %}
-        <img src="{% static 'assest/profile.png' %}" alt="profile" class="static-profile rounded-circle" ... />
-        {% endif %}
+      <a class="profile-nav-link" href="{% url 'profile' %}" aria-label="Open profile">
+        <i class="bi bi-person-circle" aria-hidden="true"></i>
       </a>
       {% else %}
-      <a class="px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
-       <img src="{% static 'assest/profile.png' %}" alt="profile" class="static-profile rounded-circle" ... />
-      </a>
+      <button type="button" class="profile-nav-link border-0 bg-transparent" data-bs-toggle="modal"
+        data-bs-target="#loginModal" aria-label="Log in">
+        <i class="bi bi-person-circle" aria-hidden="true"></i>
+      </button>
       {% endif %}
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-start">
+          <li class="nav-item mx-2">
+            <a class="nav-link active" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="{% url 'male_section' %}">Male</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="{% url 'female_section' %}">Female</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="#">Services</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+
+          {% if user.is_authenticated and user.is_customer %}
+          <li class="nav-item mx-2">
+            <a class="btn btn-outline-primary" href="{% url 'my_booking' %}">My Booking</a>
+          </li>
+          {% endif %}
+
+          <li class="nav-item mx-2">
+            <a href="#" class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#signupModal">Signup</a>
+          </li>
+          <li class="nav-item mx-2">
+            {% if user.is_authenticated and user.is_shopkeeper %}
+            {% if has_salon %}
+            <a href="{% url 'salon_detail' %}" class="btn btn-success">
+              View Dukan</a>
+            {% else %}
+            <a href="#" class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#salonModal">Register Salon</a>
+            {% endif %}
+            {% endif %}
+          </li>
+          <li class="nav-item mx-2">
+            {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="btn btn-warning px-4">Logout</a>
+            {% else %}
+            <a href="#" class="btn btn-outline-warning px-4" data-bs-toggle="modal"
+              data-bs-target="#loginModal">Login</a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
     </div>
+  </nav>
 
-    <!-- footer section -->
-    <footer class="site-footer">
-      <div class="footer-top container">
-        <div class="row">
-          <div class="col-md-4 footer-col">
-            <h5>Royal Salon</h5>
-            <p>
-              Professional grooming, easy bookings, and trusted local salons.
-            </p>
+  <nav id="secondaryNavbar" class="mobile-secondary-navbar d-lg-none">
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'male_section' %}">Male</a>
+    <a href="{% url 'female_section' %}">Female</a>
+    <a href="#">Services</a>
+    <a href="#">Contact</a>
+  </nav>
+  {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+    <div
+      class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %} alert-dismissible fade show shadow-sm"
+      role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="container-fluid p-0">{% block content %} {% endblock %}</div>
+
+  <!-- Profile ya dukan dekhne ka button -->
+  <div class="d-none d-md-block">
+    {% if user.is_authenticated %}
+    <a href="{% url 'profile' %}">
+      {% if user.image %}
+      <img src="{{ user.image.url }}" alt="profile" class="profile rounded-circle" />
+      {% else %}
+      <img src="{% static 'assest/profile.png' %}" alt="profile" class="static-profile rounded-circle" ... />
+      {% endif %}
+    </a>
+    {% else %}
+    <a class="px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
+      <img src="{% static 'assest/profile.png' %}" alt="profile" class="static-profile rounded-circle" ... />
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- footer section -->
+  <footer class="site-footer">
+    <div class="footer-top container">
+      <div class="row">
+        <div class="col-md-4 footer-col">
+          <h5>Royal Salon</h5>
+          <p>
+            Professional grooming, easy bookings, and trusted local salons.
+          </p>
+        </div>
+
+        <div class="col-md-2 footer-col">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'male_section' %}">Male Services</a></li>
+            <li><a href="{% url 'female_section' %}">Female Services</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-3 footer-col">
+          <h5>Contact</h5>
+          <p>123 Main Street, Your City</p>
+          <p>Phone: +91 98765 43210</p>
+          <p>Email: info@royalsalon.example</p>
+        </div>
+
+        <div class="col-md-3 footer-col">
+          <h5>Follow Us</h5>
+          <div class="social-icons">
+            <a href="#" aria-label="facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="twitter"><i class="bi bi-twitter"></i></a>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom container text-center">
+      <p>© 2026 Royal Salon. All Rights Reserved.</p>
+    </div>
+  </footer>
 
-          <div class="col-md-2 footer-col">
-            <h5>Quick Links</h5>
-            <ul class="list-unstyled">
-              <li><a href="{% url 'home' %}">Home</a></li>
-              <li><a href="{% url 'male_section' %}">Male Services</a></li>
-              <li><a href="{% url 'female_section' %}">Female Services</a></li>
-            </ul>
-          </div>
-
-          <div class="col-md-3 footer-col">
-            <h5>Contact</h5>
-            <p>123 Main Street, Your City</p>
-            <p>Phone: +91 98765 43210</p>
-            <p>Email: info@royalsalon.example</p>
-          </div>
-
-          <div class="col-md-3 footer-col">
-            <h5>Follow Us</h5>
-            <div class="social-icons">
-              <a href="#" aria-label="facebook"
-                ><i class="bi bi-facebook"></i
-              ></a>
-              <a href="#" aria-label="instagram"
-                ><i class="bi bi-instagram"></i
-              ></a>
-              <a href="#" aria-label="twitter"><i class="bi bi-twitter"></i></a>
+  <!-- Login Form -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">
+            Login to Your Account
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="name" class="form-label">USer name</label>
+              <input type="text" class="form-control" id="" name="username" required />
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom container text-center">
-        <p>© 2026 Royal Salon. All Rights Reserved.</p>
-      </div>
-    </footer>
-
-    <!-- Login Form -->
-    <div
-      class="modal fade"
-      id="loginModal"
-      tabindex="-1"
-      aria-labelledby="loginModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="loginModalLabel">
-              Login to Your Account
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form action="{% url 'login' %}" method="POST">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="name" class="form-label">USer name</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id=""
-                  name="username"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="loginPassword" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="loginPassword"
-                  name="password"
-                  required
-                />
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Login</button>
-              </div>
-            </form>
-            <strong>Are you new User ?</strong
-            ><a
-              href="#"
-              class="px-4"
-              data-bs-toggle="modal"
-              data-bs-target="#signupModal"
-              >Signup</a
-            >
-          </div>
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="loginPassword" name="password" required />
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+          </form>
+          <strong>Are you new User ?</strong><a href="#" class="px-4" data-bs-toggle="modal"
+            data-bs-target="#signupModal">Signup</a>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- signup form  -->
-    <div
-      class="modal fade"
-      id="signupModal"
-      tabindex="-1"
-      aria-labelledby="signupModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="signupModalLabel">Welcome to SignUp</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form method="POST" action="{% url 'signup' %}" id="signupForm">
-              {% csrf_token %}
-              <div
-                id="jsPasswordError"
-                class="alert alert-danger d-none"
-                role="alert"
-              ></div>
+  <!-- signup form  -->
+  <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="signupModalLabel">Welcome to SignUp</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{% url 'signup' %}" id="signupForm">
+            {% csrf_token %}
+            <div id="jsPasswordError" class="alert alert-danger d-none" role="alert"></div>
 
-              <div class="mb-2">
-                <input
-                  type="text"
-                  name="name"
-                  class="form-control"
-                  placeholder="Name"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <input
-                  type="text"
-                  name="username"
-                  class="form-control"
-                  placeholder="Username"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <input
-                  type="tel"
-                  id="phonenumber"
-                  name="mobile"
-                  class="form-control"
-                  placeholder="Mobile"
-                  pattern="[0-9]{10}"
-                  maxlength="10"
-                  minlength="10"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  class="form-control"
-                  placeholder="Password"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <input
-                  type="password"
-                  name="confirm_password"
-                  class="form-control"
-                  placeholder="Confirm Password"
-                  id="confirm_password"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <select name="role" class="form-select">
-                  <option value="customer">Customer</option>
-                  <option value="shopkeeper">Shopkeeper</option>
-                </select>
-              </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Signup</button>
-              </div>
-              <strong>Have You account ? </strong>
-              <a
-                href="#"
-                class="px-4"
-                data-bs-toggle="modal"
-                data-bs-target="#loginModal"
-                >Login</a
-              >
-            </form>
-          </div>
+            <div class="mb-2">
+              <input type="text" name="name" class="form-control" placeholder="Name" required />
+            </div>
+            <div class="mb-2">
+              <input type="text" name="username" class="form-control" placeholder="Username" required />
+            </div>
+            <div class="mb-2">
+              <input type="tel" id="phonenumber" name="mobile" class="form-control" placeholder="Mobile"
+                pattern="[0-9]{10}" maxlength="10" minlength="10" required />
+            </div>
+            <div class="mb-2">
+              <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                required />
+            </div>
+            <div class="mb-2">
+              <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password"
+                id="confirm_password" required />
+            </div>
+            <div class="mb-3">
+              <select name="role" class="form-select">
+                <option value="customer">Customer</option>
+                <option value="shopkeeper">Shopkeeper</option>
+              </select>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Signup</button>
+            </div>
+            <strong>Have You account ? </strong>
+            <a href="#" class="px-4" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+          </form>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Register salon form  -->
-    <div
-      class="modal fade"
-      id="salonModal"
-      tabindex="-1"
-      aria-labelledby="salonModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="salonModalLabel">
-              Register Your Salon
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form
-              action="{% url 'opensalon' %}"
-              method="POST"
-              enctype="multipart/form-data"
-            >
-              {% csrf_token %}
-              <div class="mb-2">
-                <label for="" class="label-control">Owner Name:</label>
-                <input
-                  type="text"
-                  name="owner_name"
-                  class="form-control"
-                  placeholder="Enter Salon Owner Name"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <label for="" class="label-control">Salon Name:</label>
-                <input
-                  type="text"
-                  name="salon_name"
-                  class="form-control"
-                  placeholder="Enter Salon Name"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <label for="" class="label-control">Salon Image:</label>
-                <input
-                  type="file"
-                  name="salon_image"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <label class="form-label">Opening Time:</label>
-                <input
-                  type="time"
-                  name="open_time"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-2">
-                <label class="form-label">Closing Time:</label>
-                <input
-                  type="time"
-                  name="close_time"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="p-3 bg-light rounded-3 border mb-4">
-                <label class="form-label fw-bold d-block text-dark"
-                  >Dukan ki GPS Location Set Karein</label
-                >
-                <small class="text-muted d-block mb-2"
-                  >Apni dukan par khade hokar niche diye gaye button par click
-                  karein.</small
-                >
+  <!-- Register salon form  -->
+  <div class="modal fade" id="salonModal" tabindex="-1" aria-labelledby="salonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="salonModalLabel">
+            Register Your Salon
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'opensalon' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-2">
+              <label for="" class="label-control">Owner Name:</label>
+              <input type="text" name="owner_name" class="form-control" placeholder="Enter Salon Owner Name" required />
+            </div>
+            <div class="mb-2">
+              <label for="" class="label-control">Salon Name:</label>
+              <input type="text" name="salon_name" class="form-control" placeholder="Enter Salon Name" required />
+            </div>
+            <div class="mb-2">
+              <label for="" class="label-control">Salon Image:</label>
+              <input type="file" name="salon_image" class="form-control" required />
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Opening Time:</label>
+              <input type="time" name="open_time" class="form-control" required />
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Closing Time:</label>
+              <input type="time" name="close_time" class="form-control" required />
+            </div>
+            <div class="p-3 bg-light rounded-3 border mb-4">
+              <label class="form-label fw-bold d-block text-dark">Dukan ki GPS Location Set Karein</label>
+              <small class="text-muted d-block mb-2">Apni dukan par khade hokar niche diye gaye button par click
+                karein.</small>
 
-                <button
-                  type="button"
-                  onclick="getShopGPS()"
-                  class="btn btn-sm btn-primary fw-bold mb-3"
-                >
-                  📍 Fetch My Shop Location
-                </button>
+              <button type="button" onclick="getShopGPS()" class="btn btn-sm btn-primary fw-bold mb-3">
+                📍 Fetch My Shop Location
+              </button>
 
-                <div class="row">
-                  <div class="col-6">
-                    <label class="small text-muted">Latitude</label>
-                    <input
-                      type="text"
-                      id="id_latitude"
-                      name="latitude"
-                      class="form-control bg-white"
-                      readonly
-                      required
-                      placeholder="Auto-detected"
-                    />
-                  </div>
-                  <div class="col-6">
-                    <label class="small text-muted">Longitude</label>
-                    <input
-                      type="text"
-                      id="id_longitude"
-                      name="longitude"
-                      class="form-control bg-white"
-                      readonly
-                      required
-                      placeholder="Auto-detected"
-                    />
-                  </div>
+              <div class="row">
+                <div class="col-6">
+                  <label class="small text-muted">Latitude</label>
+                  <input type="text" id="id_latitude" name="latitude" class="form-control bg-white" readonly required
+                    placeholder="Auto-detected" />
                 </div>
-                <div class="mb-3 mt-3">
-                  <label class="small text-muted">Address</label>
-                  <textarea
-                    id="id_address"
-                    name="address"
-                    class="form-control bg-white"
-                    rows="3"
-                    readonly
-                    required
-                    placeholder="Auto-detected address will appear here"
-                  ></textarea>
-                </div>
-                <div class="mb-2">
-                  <small id="locationStatus" class="text-muted"
-                    >Click "Fetch My Shop Location" to auto-fill address.</small
-                  >
+                <div class="col-6">
+                  <label class="small text-muted">Longitude</label>
+                  <input type="text" id="id_longitude" name="longitude" class="form-control bg-white" readonly required
+                    placeholder="Auto-detected" />
                 </div>
               </div>
-              <div class="d-grid">
-                <button type="submit" class="btn btn-primary">
-                  Save Salon
-                </button>
+              <div class="mb-3 mt-3">
+                <label class="small text-muted">Address</label>
+                <textarea id="id_address" name="address" class="form-control bg-white" rows="3" readonly required
+                  placeholder="Auto-detected address will appear here"></textarea>
               </div>
-            </form>
-          </div>
+              <div class="mb-2">
+                <small id="locationStatus" class="text-muted">Click "Fetch My Shop Location" to auto-fill
+                  address.</small>
+              </div>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                Save Salon
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="{% static 'js/signup.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-  </body>
+  <script src="{% static 'js/signup.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+
 </html>
