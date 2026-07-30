@@ -2,43 +2,85 @@
     position: fixed;
     height: 200px;
     width: 500px;
-    right: 20px; 
+    right: 20px;
     bottom: 20px;
     z-index: 999;
-    border-radius: 50%; /* Image ko gol (circle) banane ke liye */
-    border: 4px solid #ffc107; /* Aapki theme ka yellow border */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Thoda 3D shadow effect */
+    border-radius: 50%;
+    border: 4px solid #f59e0b;
+    box-shadow: 0 16px 35px rgba(15, 23, 42, 0.16);
     object-fit: cover;
 }
-.badge{
+
+.card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
+    color: white !important;
+    border-bottom: none;
+}
+
+.card-title {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.list-group-item {
+    border-color: rgba(15, 23, 42, 0.06);
+    padding: 0.95rem 1rem;
+    background: transparent;
+}
+
+.badge {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 0px 0px 5px 5px !important;
+    border-radius: 999px !important;
     margin-top: 1px;
-    padding: 15px;
-    height: 30px;
+    padding: 12px 16px;
+    height: auto;
     width: auto;
-    font-size: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-@media (min-width: 992px){
-    .parent-badge{
-       
-        height: 30px;
-        width: auto;
-        display: flex;
+
+.badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.2);
+}
+
+.parent-badge {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 1rem 1rem 0;
+}
+
+.btn {
+    border-radius: 999px;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+    border: none;
+}
+
+@media (min-width: 992px) {
+    .parent-badge {
         gap: 20px;
-        justify-content: center;
+        padding-top: 1.2rem;
     }
-    .badge{
 
-        font-size: 20px;
-        text-decoration: none;
-        height: 30px;
-        width: 150px;
-
-        border-radius: 12px !important;
-       background: linear-gradient(196deg, #0f23fa 0%, #0fe7fa 12%, #aaafca 35%, #00eb1b 74%, #0f85fa 100%);
+    .badge {
+        font-size: 0.95rem;
+        padding: 0.8rem 1.2rem;
     }
 }
