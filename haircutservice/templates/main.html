@@ -320,6 +320,42 @@
     </div>
   </div>
 
+  <div class="chatbot-fab" id="chatbotToggle" role="button" aria-label="Open salon assistant">
+    <i class="bi bi-chat-dots-fill"></i>
+  </div>
+
+  <div class="chatbot-panel" id="chatbotPanel" aria-live="polite">
+    <div class="chatbot-header">
+      <div>
+        <h6>Royal Salon Assistant</h6>
+        <small>Ask about salons, booking & services</small>
+      </div>
+      <button type="button" class="chatbot-close" id="chatbotClose" aria-label="Close chat">×</button>
+    </div>
+
+    <div class="chatbot-messages" id="chatbotMessages">
+      <div class="message bot">
+        <span>Hi! I can help you discover salons, book a service, or check timings.</span>
+      </div>
+    </div>
+
+    <div class="chatbot-quick-actions">
+      <button class="quick-action" data-message="Book a service">Book a service</button>
+      <button class="quick-action" data-message="What services do you offer?">Services</button>
+      <button class="quick-action" data-message="What are the timings?">Timings</button>
+    </div>
+
+    <form class="chatbot-form" id="chatbotForm">
+      <input type="text" id="chatbotInput" placeholder="Type your question..." autocomplete="off" />
+      <button type="submit" aria-label="Send message">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    window.nearbySalonsUrl = "{% url 'nearby_salons_api' %}";
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script src="{% static 'js/signup.js' %}"></script>

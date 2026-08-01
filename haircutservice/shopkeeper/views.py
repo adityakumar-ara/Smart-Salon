@@ -1,8 +1,50 @@
+from math import radians, sin, cos, asin, sqrt
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from accounts.models import CustomUser
 from .models import Salon, SalonImage, SalonService, QueueEntry, SiderImage
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+
+
+def _haversine_km(lat1, lon1, lat2, lon2):
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * asin(sqrt(a))
+    return 6371 * c
+
+
+def nearby_salons_api(request):
+    lat = request.GET.get('lat')
+    lng = request.GET.get('lng')
+    radius_km = request.GET.get('radius', 15)
+
+    if lat is None or lng is None:
+        return JsonResponse({'error': 'Please provide latitude and longitude.'}, status=400)
+
+    try:
+        lat = float(lat)
+        lng = float(lng)
+        radius_km = float(radius_km)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid coordinates.'}, status=400)
+
+    salons = Salon.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True)
+    nearby = []
+    for salon in salons:
+        distance = _haversine_km(lat, lng, salon.latitude, salon.longitude)
+        if distance <= radius_km:
+            nearby.append({
+                'id': salon.id,
+                'name': salon.salon_name,
+                'distance': round(distance, 1),
+                'url': f'/shopkeeper/salon/{salon.id}/',
+            })
+
+    nearby.sort(key=lambda item: item['distance'])
+    return JsonResponse({'salons': nearby[:8]})
 
 @login_required(login_url='login')
 def opensalon(request):

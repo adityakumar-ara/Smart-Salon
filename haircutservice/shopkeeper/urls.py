@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .import views 
 urlpatterns = [
+    path('api/nearby-salons/', views.nearby_salons_api, name='nearby_salons_api'),
     path('salon/<int:salon_id>/', views.salon_detail_public, name='salon_detail_public'),
     path('opensalon/', views.opensalon, name='opensalon'),
     path('salondetail/', views.salon_views, name='salon_detail'),
