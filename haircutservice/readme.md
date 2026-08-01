@@ -14,3 +14,11 @@ Notes:
  <!-- {% if user.is_authenticated == Shopkeeper %}
 
             <a href="#" class="btn btn-warning px-4" data-bs-toggle="modal" data-bs-target="#salonModal">Open Dukan</a> -->
+
+
+
+
+
+
+
+a=sin2(Δlat/2)+cos(lat1)cos(lat2)sin2(Δlon/2)            

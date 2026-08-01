@@ -19,51 +19,63 @@
             <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
                 <div class="carousel-indicators">
                     {% for slide in slide_image %}
-                    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+                    <button type="button" data-bs-target="#carouselExampleDark"
+                        data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"
+                        aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
                     {% endfor %}
                 </div>
                 <div class="carousel-inner rounded-4 shadow-sm">
                     {% for slide in slide_image %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
                         {% if slide.image %}
-                        <img src="{{ slide.image.url }}" class="d-block w-100" alt="Slider Image" style="height: 400px; object-fit: cover;">
+                        <img src="{{ slide.image.url }}" class="d-block w-100" alt="Slider Image"
+                            style="height: 400px; object-fit: cover;">
                         {% endif %}
                         <div class="carousel-caption d-none d-md-block"></div>
                     </div>
                     {% endfor %}
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark"
+                    data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark"
+                    data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
             {% else %}
-            <div class="bg-light rounded-4 shadow-sm d-flex align-items-center justify-content-center" style="height: 400px;">
+            <div class="bg-light rounded-4 shadow-sm d-flex align-items-center justify-content-center"
+                style="height: 400px;">
                 <p class="text-muted">Welcome to our Salon Service!</p>
             </div>
             {% endif %}
         </div>
         <div class="col-lg-7">
             <div class="hero-card">
-            <h1 class="hero-title fw-bold">
-                Transform Your Salon <span style="color: #ffc107;">Digitally.</span>
-            </h1>
-            <p class="hero-subtitle lead mt-3 fw-semibold">
-                The ultimate platform for salon owners to launch their "Digital Dukan"
-                and for customers to join the smart online queue.
-            </p>
-            <div class="mt-4 hero-btn ">
-                
-                <a href="#salons-section" class="btn btn-outline-dark btn-lg px-4">Explore Salons</a>
-                <a href="" class="btn btn-outline-dark btn-lg px-4" data-bs-toggle="modal"
-              data-bs-target="#salonModal" >Register Salon</a>
+                <h1 class="hero-title fw-bold">
+                    Transform Your Salon <span style="color: #ffc107;">Digitally.</span>
+                </h1>
+                <p class="hero-subtitle lead mt-3 fw-semibold">
+                    The ultimate platform for salon owners to launch their "Digital Dukan"
+                    and for customers to join the smart online queue.
+                </p>
+                <div class="mt-4 hero-btn ">
+                    {% if user.athenticate %}
+                    <a href="#salons-section" class="btn btn-outline-dark btn-lg px-4">Explore Salons</a>
+                    <a href="" class="btn btn-outline-dark btn-lg px-4" data-bs-toggle="modal"
+                        data-bs-target="#salonModal">Register Salon</a>
+                    {% else %}
+                    <a href="#" class="btn btn-outline-dark btn-lg px-4" data-bs-toggle="modal"
+                        data-bs-target="#loginModal">Login</a>
+                    <a href="#" class="btn btn-outline-dark btn-lg px-4" data-bs-toggle="modal"
+                        data-bs-target="#signupModal">SignUp</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
 </div>
@@ -72,56 +84,56 @@
 <!-- Sallon_views -->
 
 <div class="container-fluid bg-light py-5" id="salons-section">
-<div class="container">
-    <h2 class="fw-bold mb-4 text-center">Explore Our Salons</h2>
-    {% if salons %}
-    <div class="row g-4">
+    <div class="container">
+        <h2 class="fw-bold mb-4 text-center">Explore Our Salons</h2>
+        {% if salons %}
+        <div class="row g-4">
 
-        {% for i in salons %}
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-            <a href="{% url 'salon_detail_public' i.id %}" class="text-decoration-none">
-            <div class="card salon-card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+            {% for i in salons %}
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <a href="{% url 'salon_detail_public' i.id %}" class="text-decoration-none">
+                    <div class="card salon-card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
 
-                {% if i.salon_image %}
-                <img src="{{ i.salon_image.url }}" class="card-img-top"
-                    style="height: 180px; object-fit: cover;" alt="{{ i.salon_name }}">
-                {% else %}
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                    class="card-img-top bg-light"
-                    style="height: 180px; object-fit: contain; padding: 20px;" alt="Default Profile Image">
-                {% endif %}
+                        {% if i.salon_image %}
+                        <img src="{{ i.salon_image.url }}" class="card-img-top"
+                            style="height: 180px; object-fit: cover;" alt="{{ i.salon_name }}">
+                        {% else %}
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="card-img-top bg-light"
+                            style="height: 180px; object-fit: contain; padding: 20px;" alt="Default Profile Image">
+                        {% endif %}
 
-                <div class="card-body">
-                    <h4 class="salon-name fw-bold text-dark mb-0 fs-5 text-truncate" title="{{ i.salon_name }}">
-                        {{ i.salon_name }}
-                    </h4>
+                        <div class="card-body">
+                            <h4 class="salon-name fw-bold text-dark mb-0 fs-5 text-truncate" title="{{ i.salon_name }}">
+                                {{ i.salon_name }}
+                            </h4>
 
-                    <p class="text-muted small mb-2 owner-name text-truncate">
-                        <i class="fas fa-user me-1"></i> {{ i.owner_name }}
-                    </p>
+                            <p class="text-muted small mb-2 owner-name text-truncate">
+                                <i class="fas fa-user me-1"></i> {{ i.owner_name }}
+                            </p>
 
-                    <p class="text-muted small mb-2 salon-address text-truncate" title="{{ i.location_text }}">
-                        <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ i.location_text }}
-                    </p>
-                </div>
-                <div class="card-footer bg-white border-0 pt-0">
-                     <p class="text-success small mb-0 salon-time text-truncate">
-                        <i class="fas fa-clock me-1"></i> {{ i.open_time|time:"g:i A" }} - {{ i.close_time|time:"g:i A" }}
-                    </p>
-                </div>
+                            <p class="text-muted small mb-2 salon-address text-truncate" title="{{ i.location_text }}">
+                                <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ i.location_text }}
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-0 pt-0">
+                            <p class="text-success small mb-0 salon-time text-truncate">
+                                <i class="fas fa-clock me-1"></i> {{ i.open_time|time:"g:i A" }} - {{
+                                i.close_time|time:"g:i A" }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+
             </div>
-            </a>
-
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <div class="alert alert-info rounded-4 py-4 text-center">
+            <h5 class="mb-1">No salons found yet.</h5>
+            <p class="mb-0">Register a salon or refresh after adding one to see it here.</p>
+        </div>
+        {% endif %}
     </div>
-    {% else %}
-    <div class="alert alert-info rounded-4 py-4 text-center">
-        <h5 class="mb-1">No salons found yet.</h5>
-        <p class="mb-0">Register a salon or refresh after adding one to see it here.</p>
-    </div>
-    {% endif %}
-</div>
 </div>
 </div>
 
