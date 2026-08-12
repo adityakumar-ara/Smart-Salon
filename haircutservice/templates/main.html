@@ -35,13 +35,13 @@
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav align-items-start">
           <li class="nav-item mx-2">
-            <a class="nav-link active" href="{% url 'home' %}">Home</a>
+            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="{% url 'male_section' %}">Male</a>
+            <a class="nav-link {% if request.path == '/shopkeeper/maleservice/' %}active{% endif %}" href="{% url 'male_section' %}">Male</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="{% url 'female_section' %}">Female</a>
+            <a class="nav-link {% if request.path == '/shopkeeper/femaleservice/' %}active{% endif %}" href="{% url 'female_section' %}">Female</a>
           </li>
           <li class="nav-item mx-2">
             <a class="nav-link" href="#">Services</a>
@@ -84,9 +84,9 @@
   </nav>
 
   <nav id="secondaryNavbar" class="mobile-secondary-navbar d-lg-none">
-    <a href="{% url 'home' %}">Home</a>
-    <a href="{% url 'male_section' %}">Male</a>
-    <a href="{% url 'female_section' %}">Female</a>
+    <a class="{% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+    <a class="{% if request.path == '/shopkeeper/maleservice/' %}active{% endif %}" href="{% url 'male_section' %}">Male</a>
+    <a class="{% if request.path == '/shopkeeper/femaleservice/' %}active{% endif %}" href="{% url 'female_section' %}">Female</a>
     <a href="#">Services</a>
     <a href="#">Contact</a>
   </nav>

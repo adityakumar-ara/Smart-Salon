@@ -60,8 +60,29 @@ async function getShopGPS() {
     );
 }
 
+// For active tab highlight
+function syncActiveNav() {
+    const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+    const links = document.querySelectorAll('.nav-link, .mobile-secondary-navbar a');
+
+    links.forEach((link) => {
+        const href = (link.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+        link.classList.remove('active');
+
+        const isHome = currentPath === '/' && href === '/';
+        const isMale = currentPath === '/shopkeeper/maleservice' && href === '/shopkeeper/maleservice';
+        const isFemale = currentPath === '/shopkeeper/femaleservice' && href === '/shopkeeper/femaleservice';
+
+        if (isHome || isMale || isFemale) {
+            link.classList.add('active');
+        }
+    });
+}
+
 // For second Navbar
 document.addEventListener('DOMContentLoaded', function () {
+  syncActiveNav();
+
   const secondaryNavbar = document.getElementById("secondaryNavbar");
   if (secondaryNavbar) {
       let previousScrollY = window.scrollY;

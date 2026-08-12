@@ -35,12 +35,40 @@ body {
     color: var(--dark) !important;
     font-weight: 600;
     transition: color 0.25s ease, transform 0.2s ease;
+    position: relative;
 }
 
 .nav-link:hover,
 .nav-link:focus {
     color: var(--primary) !important;
     transform: translateY(-1px);
+}
+
+.nav-link.active {
+    color: var(--primary) !important;
+    font-weight: 800;
+}
+
+.nav-link.active::after {
+    content: "";
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: -8px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 999px;
+}
+
+.mobile-secondary-navbar a.active {
+    color: var(--primary) !important;
+    font-weight: 800;
+    border-bottom: 3px solid var(--primary);
+}
+
+.nav-link.active,
+.mobile-secondary-navbar a.active {
+    box-shadow: none;
 }
 
 .custom-navbar {
