@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             const alertBox = document.createElement("div");
             alertBox.className = "alert_box";
-            alertBox.textContent = "First of all Login Please";
+            alertBox.textContent = "Make sure Your are login";
 
             document.body.appendChild(alertBox);
 

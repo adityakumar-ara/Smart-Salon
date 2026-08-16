@@ -13,8 +13,14 @@
     {% endif %}
 
     {% if otp_stage == 'verify_email' or otp_stage == 'welcome' %}
-      {% if not email_sent %}
-        <p style="color: #b02a37;">Email delivery failed, so the OTP is shown below for local testing.</p>
+      <p style="margin-bottom: 16px; color: #555;">We sent the OTP to your registered email address.</p>
+      <div style="margin-bottom: 12px;">
+        <label for="registered-email">Email</label>
+        <input type="email" id="registered-email" value="{{ email }}" readonly
+          style="width: 100%; box-sizing: border-box; padding: 8px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 4px; background: #f8f9fa;" />
+      </div>
+      {% if email_error %}
+        <p style="color: #b02a37;">Email delivery failed. Please try again after checking the email configuration.</p>
       {% endif %}
       {% if debug_otp %}
         <p style="font-weight: bold;">OTP: {{ debug_otp }}</p>
