@@ -1,17 +1,22 @@
 import random
+import secrets
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render, get_object_or_404
+from django.utils import timezone
 from shopkeeper.models import QueueEntry, Salon, SiderImage
 
 from .models import CustomUser
 
 User = get_user_model()
+PASSWORD_RESET_OTP_LIFETIME_SECONDS = 10 * 60
 
 
 def _generate_otp():
@@ -32,6 +37,91 @@ def _clear_signup_session(request):
     request.session.pop('signup_verification_otp', None)
     request.session.pop('signup_welcome_otp', None)
     request.session.pop('signup_step', None)
+
+
+def _clear_password_reset_session(request):
+    for key in ('password_reset_user_id', 'password_reset_email', 'password_reset_otp',
+                'password_reset_otp_created_at', 'password_reset_verified'):
+        request.session.pop(key, None)
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = (request.POST.get('email') or '').strip()
+        user = User.objects.filter(email__iexact=email).first()
+        if not user:
+            messages.error(request, 'No account is registered with this email address.')
+            return render(request, 'accounts/forgot_password.html', {'email': email})
+
+        otp = _generate_otp()
+        request.session['password_reset_user_id'] = user.pk
+        request.session['password_reset_email'] = user.email
+        request.session['password_reset_otp'] = otp
+        request.session['password_reset_otp_created_at'] = timezone.now().timestamp()
+        request.session['password_reset_verified'] = False
+        email_sent, _ = _send_otp_email(
+            request, user.email, 'Password reset OTP',
+            f'Hello {user.name or user.username},\n\nYour password reset OTP is: {otp}\n\nIt expires in 10 minutes. Do not share this code with anyone.',
+        )
+        if not email_sent:
+            _clear_password_reset_session(request)
+            messages.error(request, 'We could not send the OTP. Please try again later.')
+            return render(request, 'accounts/forgot_password.html', {'email': email})
+        return redirect('verify_password_reset_otp')
+    return render(request, 'accounts/forgot_password.html')
+
+
+def verify_password_reset_otp(request):
+    user_id = request.session.get('password_reset_user_id')
+    email = request.session.get('password_reset_email')
+    expected_otp = request.session.get('password_reset_otp')
+    created_at = request.session.get('password_reset_otp_created_at')
+    if not all([user_id, email, expected_otp, created_at]):
+        messages.error(request, 'Your password reset session has expired. Please request a new OTP.')
+        return redirect('forgot_password')
+    if timezone.now().timestamp() - float(created_at) > PASSWORD_RESET_OTP_LIFETIME_SECONDS:
+        _clear_password_reset_session(request)
+        messages.error(request, 'This OTP has expired. Please request a new one.')
+        return redirect('forgot_password')
+    if request.method == 'POST':
+        otp = (request.POST.get('otp') or '').strip()
+        if not secrets.compare_digest(otp, expected_otp):
+            messages.error(request, 'The OTP is invalid. Please try again.')
+            return render(request, 'accounts/verify_reset_otp.html', {'email': email})
+        request.session['password_reset_verified'] = True
+        request.session.pop('password_reset_otp', None)
+        return redirect('reset_password_confirm')
+    return render(request, 'accounts/verify_reset_otp.html', {'email': email})
+
+
+def reset_password_confirm(request):
+    user_id = request.session.get('password_reset_user_id')
+    if not user_id or not request.session.get('password_reset_verified'):
+        messages.error(request, 'Verify your OTP before changing your password.')
+        return redirect('forgot_password')
+    user = User.objects.filter(pk=user_id).first()
+    if not user:
+        _clear_password_reset_session(request)
+        messages.error(request, 'Account not found. Please request a new OTP.')
+        return redirect('forgot_password')
+    if request.method == 'POST':
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'accounts/reset_password_form.html')
+        try:
+            validate_password(password, user)
+        except ValidationError as error:
+            for message in error.messages:
+                messages.error(request, message)
+            return render(request, 'accounts/reset_password_form.html')
+        user.set_password(password)
+        user.save(update_fields=['password'])
+        _clear_password_reset_session(request)
+        messages.success(request, 'Your password has been reset. Please log in.')
+        return redirect('login')
+    return render(request, 'accounts/reset_password_form.html')
 
 
 def SignUp(request):

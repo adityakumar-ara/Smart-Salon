@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core import mail
 from django.urls import reverse
+from .models import CustomUser
 
 
 class SignupOtpFlowTests(TestCase):
@@ -48,3 +49,33 @@ class SignupOtpFlowTests(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertTrue(response.wsgi_request.user.is_authenticated)
         self.assertEqual(response.wsgi_request.user.username, 'alice')
+
+
+class PasswordResetOtpFlowTests(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(
+            username='reset-user', email='reset@example.com', password='OldPassword123',
+            name='Reset User', mobile='9876543210',
+        )
+
+    def test_user_can_reset_password_after_verifying_email_otp(self):
+        response = self.client.post(reverse('forgot_password'), {'email': self.user.email})
+        self.assertRedirects(response, reverse('verify_password_reset_otp'))
+        self.assertEqual(len(mail.outbox), 1)
+
+        otp = mail.outbox[0].body.split('OTP is: ')[1].split('\n')[0]
+        response = self.client.post(reverse('verify_password_reset_otp'), {'otp': otp})
+        self.assertRedirects(response, reverse('reset_password_confirm'))
+
+        response = self.client.post(reverse('reset_password_confirm'), {
+            'password': 'NewPassword123', 'confirm_password': 'NewPassword123',
+        })
+        self.assertRedirects(response, reverse('login'))
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('NewPassword123'))
+
+    def test_unregistered_email_does_not_send_otp(self):
+        response = self.client.post(reverse('forgot_password'), {'email': 'missing@example.com'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'No account is registered with this email address.')
+        self.assertEqual(len(mail.outbox), 0)
