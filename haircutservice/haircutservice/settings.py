@@ -149,10 +149,8 @@ EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
 if not EMAIL_BACKEND:
     if 'test' in sys.argv:
         EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-    elif os.getenv('EMAIL_HOST_USER') and os.getenv('EMAIL_HOST_PASSWORD'):
-        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     else:
-        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))

@@ -1,41 +1,43 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Verification</title>
+  <title>Email Verification | Royal Salon</title>
+  <link rel="stylesheet" href="{% static 'css/otp-verification.css' %}">
 </head>
 <body>
-  <div style="max-width: 420px; margin: 40px auto; padding: 24px; border: 1px solid #ddd; border-radius: 10px; font-family: Arial, sans-serif;">
-    <h3>Email Verification</h3>
-    {% if message %}
-      <p style="color: #0d6efd;">{{ message }}</p>
-    {% endif %}
-
-    {% if otp_stage == 'verify_email' or otp_stage == 'welcome' %}
-      <p style="margin-bottom: 16px; color: #555;">We sent the OTP to your registered email address.</p>
-      <div style="margin-bottom: 12px;">
-        <label for="registered-email">Email</label>
-        <input type="email" id="registered-email" value="{{ email }}" readonly
-          style="width: 100%; box-sizing: border-box; padding: 8px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 4px; background: #f8f9fa;" />
+  <main class="otp-page">
+    <section class="otp-card" aria-labelledby="verification-title">
+      <div class="otp-card__topline"></div>
+      <div class="otp-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="m4.5 7 7.5 5.5L19.5 7"></path><path d="M17 4V2.5M20 5.5h1.5"></path></svg>
       </div>
-      {% if email_error %}
-        <p style="color: #b02a37;">Email delivery failed. Please try again after checking the email configuration.</p>
-      {% endif %}
-      {% if debug_otp %}
-        <p style="font-weight: bold;">OTP: {{ debug_otp }}</p>
-      {% endif %}
-      <form method="post" action="{% url 'verify_otp' %}">
-        {% csrf_token %}
-        <div style="margin-bottom: 12px;">
-          <label for="otp">Enter OTP</label>
-          <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter the OTP" required />
+      <span class="otp-eyebrow">Secure verification</span>
+      <h1 id="verification-title">Check your inbox</h1>
+
+      {% if otp_stage == 'verify_email' %}
+        <p class="otp-description">We sent a six-digit verification code to your registered email address.</p>
+        <div class="email-summary">
+          <span class="email-summary__label">Verification email</span>
+          <strong>{{ email }}</strong>
         </div>
-        <button type="submit" class="btn btn-primary">Verify OTP</button>
-      </form>
-    {% else %}
-      <p>Please use the signup form on the home page to start verification.</p>
-    {% endif %}
-  </div>
+        {% if email_error %}
+          <div class="otp-alert" role="alert"><strong>Couldn’t send the OTP.</strong><span>Please check the email configuration and try again.</span></div>
+        {% endif %}
+        <form method="post" action="{% url 'verify_otp' %}" class="otp-form">
+          {% csrf_token %}
+          <label for="otp">Enter verification code</label>
+          <input type="text" id="otp" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="• • • • • •" required autofocus>
+          <button type="submit">Verify email <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="otp-note">The code is only for verifying your email. Keep it private.</p>
+      {% else %}
+        <p class="otp-description">Please start the signup process again to receive an email verification code.</p>
+        <a class="otp-back" href="{% url 'home' %}">Back to home</a>
+      {% endif %}
+    </section>
+  </main>
 </body>
 </html>

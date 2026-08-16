@@ -1,3 +1,4 @@
+import logging
 import random
 
 from django.conf import settings
@@ -14,6 +15,7 @@ from shopkeeper.models import QueueEntry, Salon, SiderImage
 from .models import CustomUser
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def _generate_otp():
@@ -21,19 +23,11 @@ def _generate_otp():
 
 
 def _send_otp_email(request, to_email, subject, message):
-    if settings.DEBUG:
-        # In debug mode, print the email content to the console for easy testing.
-        # This helps see the OTP without checking the console email backend output.
-        print("--- SENDING EMAIL (DEBUG) ---")
-        print(f"To: {to_email}")
-        print(f"Subject: {subject}")
-        print(f"Body:\n{message}")
-        print("-----------------------------")
-
     try:
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [to_email], fail_silently=False)
         return True, None
     except Exception as exc:
+        logger.exception('OTP email could not be sent to %s', to_email)
         request.session['email_delivery_error'] = str(exc)
         return False, str(exc)
 
@@ -110,7 +104,7 @@ def SignUp(request):
             'otp_stage': 'verify_email',
             'email_sent': email_sent,
             'email_error': email_error,
-            'debug_otp': verification_otp if not email_sent else None,
+            'debug_otp': None,
         })
 
     return render(request, 'accounts/signup.html', {'otp_stage': 'signup'})
@@ -135,33 +129,6 @@ def verify_otp(request):
                 'message': 'Invalid email verification OTP. Please try again.',
                 'email': pending_signup['email'],
                 'otp_stage': 'verify_email',
-            })
-
-        welcome_otp = _generate_otp()
-        request.session['signup_welcome_otp'] = welcome_otp
-        request.session['signup_step'] = 'welcome'
-        email_sent, email_error = _send_otp_email(
-            request,
-            pending_signup['email'],
-            'Welcome OTP',
-            f'Hello {pending_signup["name"] or pending_signup["username"]},\n\nWelcome OTP: {welcome_otp}\n\nUse it to complete your signup.',
-        )
-        return render(request, 'accounts/signup.html', {
-            'message': 'Welcome OTP',
-            'email': pending_signup['email'],
-            'otp_stage': 'welcome',
-            'email_sent': email_sent,
-            'email_error': email_error,
-            'debug_otp': welcome_otp if not email_sent else None,
-        })
-
-    if step == 'welcome':
-        expected_otp = request.session.get('signup_welcome_otp')
-        if otp_value != expected_otp:
-            return render(request, 'accounts/signup.html', {
-                'message': 'Invalid welcome OTP. Please try again.',
-                'email': pending_signup['email'],
-                'otp_stage': 'welcome',
             })
 
         user = User.objects.create_user(
@@ -244,8 +211,6 @@ def forgot_password(request):
  
         if not email_sent:
             messages.error(request, f'Failed to send OTP email. {email_error or ""}')
-            if settings.DEBUG:
-                messages.info(request, f"DEBUG: OTP is {otp}")
             return render(request, 'accounts/forgot_password.html')
         messages.success(request, 'An OTP has been sent to your email address.')
         return redirect('verify_password_reset_otp')

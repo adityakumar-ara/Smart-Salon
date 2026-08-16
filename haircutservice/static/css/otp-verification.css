@@ -1,0 +1,23 @@
+:root { --primary: #2563eb; --primary-dark: #1d4ed8; --accent: #f59e0b; --purple: #7c3aed; --dark: #111827; --text: #1f2937; --muted: #6b7280; --border: rgba(15, 23, 42, .1); }
+* { box-sizing: border-box; }
+body { min-width: 320px; min-height: 100vh; margin: 0; color: var(--text); font-family: "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 48%, #fff8eb 100%); }
+.otp-page { display: grid; min-height: 100vh; padding: 32px 20px; place-items: center; }
+.otp-card { position: relative; width: min(100%, 460px); padding: 44px 42px 38px; overflow: hidden; background: rgba(255,255,255,.96); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 24px 60px rgba(37,99,235,.16); }
+.otp-card__topline { position: absolute; inset: 0 0 auto; height: 5px; background: linear-gradient(90deg, var(--primary), var(--purple), var(--accent)); }
+.otp-icon { display: grid; width: 54px; height: 54px; margin-bottom: 20px; color: var(--primary); background: #eaf1ff; border-radius: 16px; place-items: center; }
+.otp-icon svg { width: 28px; height: 28px; }
+.otp-eyebrow { color: var(--primary); font-size: .77rem; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
+h1 { margin: 8px 0 11px; color: var(--dark); font-size: clamp(1.75rem, 5vw, 2.15rem); line-height: 1.1; }
+.otp-description { margin: 0; color: var(--muted); line-height: 1.6; }
+.email-summary { margin: 26px 0 22px; padding: 14px 16px; background: #f8faff; border: 1px solid #dbe7ff; border-radius: 13px; }
+.email-summary__label { display: block; margin-bottom: 4px; color: var(--muted); font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.email-summary strong { display: block; overflow: hidden; color: var(--dark); font-size: .96rem; text-overflow: ellipsis; white-space: nowrap; }
+.otp-form label { display: block; margin-bottom: 9px; color: var(--dark); font-size: .92rem; font-weight: 700; }
+.otp-form input { width: 100%; padding: 15px 16px; color: var(--dark); font-size: 1.1rem; font-weight: 800; letter-spacing: .34em; text-align: center; outline: none; border: 1px solid #cbd5e1; border-radius: 13px; transition: border-color .2s, box-shadow .2s; }
+.otp-form input::placeholder { color: #94a3b8; letter-spacing: .15em; }
+.otp-form input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,.13); }
+.otp-form button, .otp-back { display: inline-flex; width: 100%; margin-top: 15px; padding: 14px 18px; color: #fff; font: inherit; font-weight: 800; text-decoration: none; cursor: pointer; background: linear-gradient(135deg, var(--primary), var(--purple)); border: 0; border-radius: 13px; box-shadow: 0 10px 20px rgba(37,99,235,.2); justify-content: center; gap: 9px; transition: transform .2s, box-shadow .2s; }
+.otp-form button:hover, .otp-back:hover { box-shadow: 0 14px 24px rgba(37,99,235,.28); transform: translateY(-2px); }
+.otp-note { margin: 20px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.5; text-align: center; }
+.otp-alert { display: grid; gap: 3px; margin: 18px 0; padding: 12px 14px; color: #991b1b; font-size: .88rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; }
+@media (max-width: 480px) { .otp-card { padding: 36px 24px 28px; border-radius: 20px; } }
