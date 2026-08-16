@@ -70,6 +70,14 @@
             {% endif %}
             {% endif %}
           </li>
+          {% if user.is_authenticated and user.is_shopkeeper and has_salon %}
+          <li class="nav-item mx-2">
+            <a href="{% url 'add_service' %}" class="btn btn-primary">Add Service</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a href="{% url 'service_views' %}" class="btn btn-outline-primary">View Services</a>
+          </li>
+          {% endif %}
           <li class="nav-item mx-2">
             {% if user.is_authenticated %}
             <a href="{% url 'logout' %}" class="btn btn-warning px-4">Logout</a>
@@ -89,6 +97,10 @@
     <a class="{% if request.path == '/shopkeeper/femaleservice/' %}active{% endif %}" href="{% url 'female_section' %}">Female</a>
     <a href="#">Services</a>
     <a href="#">Contact</a>
+    {% if user.is_authenticated and user.is_shopkeeper and has_salon %}
+    <a href="{% url 'add_service' %}">Add Service</a>
+    <a href="{% url 'service_views' %}">View Services</a>
+    {% endif %}
   </nav>
   {% if messages %}
   <div class="container mt-3">
