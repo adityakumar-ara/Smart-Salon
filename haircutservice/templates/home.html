@@ -63,10 +63,9 @@
                     and for customers to join the smart online queue.
                 </p>
                 <div class="mt-4 hero-btn ">
-                    {% if user.athenticate %}
+                    {% if user.is_authenticated %}
                     <a href="#salons-section" class="btn btn-outline-dark btn-lg px-4">Explore Salons</a>
-                    <a href="" class="btn btn-outline-dark btn-lg px-4" data-bs-toggle="modal"
-                        data-bs-target="#salonModal">Register Salon</a>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-dark btn-lg px-4">Your Profile</a>
                     {% else %}
                     <a href="#" class="btn btn-outline-dark btn-lg px-4" data-bs-toggle="modal"
                         data-bs-target="#loginModal">Login</a>
@@ -85,12 +84,13 @@
 
 <div class="container-fluid bg-light py-5" id="salons-section">
     <div class="container">
-        <h2 class="fw-bold mb-4 text-center">Explore Our Salons</h2>
+        <h2 class="fw-bold mb-2 text-center">Salons Near You</h2>
+        <div id="nearbySalonsStatus" class="text-center mb-4" aria-live="polite"></div>
         {% if salons %}
-        <div class="row g-4">
+        <div id="homeSalonList" class="row g-4">
 
             {% for i in salons %}
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12" data-salon-id="{{ i.id }}">
                 <a href="{% url 'salon_detail_public' i.id %}" class="text-decoration-none">
                     <div class="card salon-card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
 

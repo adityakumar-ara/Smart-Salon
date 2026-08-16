@@ -149,13 +149,24 @@ document.addEventListener('DOMContentLoaded', function () {
       userMessage.textContent = text;
       messages.appendChild(userMessage);
 
+      const lowerText = text.toLowerCase().trim();
+      if (awaitingExpandedSalonSearch && isYesAnswer(lowerText)) {
+          awaitingExpandedSalonSearch = false;
+          appendBotMessage("Searching for salons within 20 km of your location...");
+          await findNearbySalons(20);
+          return;
+      }
+
+      if (awaitingExpandedSalonSearch && isNoAnswer(lowerText)) {
+          awaitingExpandedSalonSearch = false;
+          appendBotMessage("No problem. You can search again whenever you want.");
+          return;
+      }
+
       if (shouldSearchNearby(text)) {
-          const botResponse = document.createElement("div");
-          botResponse.className = "message bot";
-          botResponse.innerHTML = "I can find salons close to you. I will use your location to suggest the nearest options.";
-          messages.appendChild(botResponse);
-          messages.scrollTop = messages.scrollHeight;
-          await findNearbySalons();
+          awaitingExpandedSalonSearch = false;
+          appendBotMessage("Checking salons near your current location...");
+          await findNearbySalons(5);
           return;
       }
 
@@ -171,7 +182,17 @@ document.addEventListener('DOMContentLoaded', function () {
       return lower.includes("near") || lower.includes("nearby") || lower.includes("around me") || lower.includes("closest") || lower.includes("my near salon") || lower.includes("nearest salon");
   }
 
-  async function findNearbySalons() {
+  let awaitingExpandedSalonSearch = false;
+
+  function isYesAnswer(text) {
+      return text === "yes" || text.includes("yes, search") || text === "haan" || text === "ha";
+  }
+
+  function isNoAnswer(text) {
+      return text === "no" || text === "nahi" || text === "nahin";
+  }
+
+  async function findNearbySalons(radiusKm) {
       if (!navigator.geolocation) {
           appendBotMessage("Your browser does not support location access. Please enter a city or salon name manually.");
           return;
@@ -187,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
           });
 
           const { latitude, longitude } = position.coords;
-          const response = await fetch(`${window.nearbySalonsUrl}?lat=${latitude}&lng=${longitude}&radius=20`);
+          const response = await fetch(`${window.nearbySalonsUrl}?lat=${latitude}&lng=${longitude}&radius=${radiusKm}`);
           const data = await response.json();
 
           if (!response.ok || data.error) {
@@ -197,12 +218,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
           const salons = data.salons || [];
           if (!salons.length) {
-              appendBotMessage("I did not find any salon within 20 km of your current location.");
+              if (radiusKm === 5) {
+                  awaitingExpandedSalonSearch = true;
+                  appendBotMessage(`Aapke 5 km ke andar koi salon registered nahi hai. Kya aap 20 km ke andar salons dekhna chahte hain?<div class="mt-2"><button type="button" class="quick-action" data-message="Yes, search within 20 km">Yes</button><button type="button" class="quick-action ms-2" data-message="No">No</button></div>`);
+              } else {
+                  appendBotMessage("Sorry, aapke 20 km ke andar bhi koi salon registered nahi hai.");
+              }
               return;
           }
 
-          const list = salons.map((salon) => `<div class="mt-2"><strong>${salon.name}</strong> • ${salon.distance} km <a href="${salon.url}" target="_blank" rel="noopener">Open</a></div>`).join("");
-          appendBotMessage(`These salons are closest to you:<br>${list}`);
+          const list = salons.map((salon) => `<div class="mt-2"><strong>${escapeHtml(salon.name)}</strong> • ${salon.distance} km <a href="${salon.url}" target="_blank" rel="noopener">Open</a></div>`).join("");
+          const heading = radiusKm === 5
+              ? "These salons are near your location:"
+              : `${data.total} salon(s) found within 20 km:`;
+          appendBotMessage(`${heading}<br>${list}`);
       } catch (error) {
           appendBotMessage("Location access was denied or timed out. Please allow location access to see nearby salons.");
       }
@@ -214,6 +243,12 @@ document.addEventListener('DOMContentLoaded', function () {
       botResponse.innerHTML = message;
       messages.appendChild(botResponse);
       messages.scrollTop = messages.scrollHeight;
+  }
+
+  function escapeHtml(value) {
+      const element = document.createElement("div");
+      element.textContent = value;
+      return element.innerHTML;
   }
 
   function getBotReply(text) {

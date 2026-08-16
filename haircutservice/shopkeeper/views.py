@@ -44,7 +44,7 @@ def nearby_salons_api(request):
             })
 
     nearby.sort(key=lambda item: item['distance'])
-    return JsonResponse({'salons': nearby[:8]})
+    return JsonResponse({'salons': nearby[:20], 'total': len(nearby)})
 
 @login_required(login_url='login')
 def opensalon(request):

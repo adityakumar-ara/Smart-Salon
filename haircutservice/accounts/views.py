@@ -310,7 +310,7 @@ def editprofile(request, id):
        
         if new_username != updateprofile.username:
             if CustomUser.objects.filter(username=new_username).exists():
-                messages.error(request, f"Username '{new_username}' pehle se kisi aur ne liya hua hai!")
+                messages.error(request, f"Username '{new_username}'Username alredy taken!")
                 context = {'user': updateprofile}
                 return render(request, 'accounts/editprofile.html', context)
         
@@ -325,7 +325,7 @@ def editprofile(request, id):
                updateprofile.image = request.FILES.get('image')
 
         updateprofile.save()
-        messages.success(request, "Profile successfully update ho gayi!")
+        messages.success(request, "Profile successfully updated!")
         return redirect('profile')
         
     context = {'user': updateprofile}
