@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'customer',
     'shopkeeper',
     'cloudinary',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -158,6 +159,21 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'supportsalon@gmail.com')
+
+
+
+
+# Brevo API Email Settings
+# EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+
+# ANYMAIL = {
+#     "SENDINBLUE_API_KEY": os.getenv("BREVO_API_KEY"),
+# }
+
+# # यहाँ अपनी वह ईमेल ID लिखें जिससे आपने Brevo पर अकाउंट बनाया है
+# DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "adityaara7667@gmail.com")
+
+
 
 
 
