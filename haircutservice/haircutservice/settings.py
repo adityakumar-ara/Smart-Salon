@@ -146,32 +146,32 @@ MEDIA_ROOT =BASE_DIR/'media'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-if not EMAIL_BACKEND:
-    if 'test' in sys.argv:
-        EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-    else:
-        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+# if not EMAIL_BACKEND:
+#     if 'test' in sys.argv:
+#         EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+#     else:
+#         EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'supportsalon@gmail.com')
+# EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+# EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'supportsalon@gmail.com')
 
 
 
 
 # Brevo API Email Settings
-# EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
-# ANYMAIL = {
-#     "SENDINBLUE_API_KEY": os.getenv("BREVO_API_KEY"),
-# }
+ANYMAIL = {
+    "SENDINBLUE_API_KEY": os.getenv("BREVO_API_KEY"),
+}
 
-# # यहाँ अपनी वह ईमेल ID लिखें जिससे आपने Brevo पर अकाउंट बनाया है
-# DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "adityaara7667@gmail.com")
+# यहाँ अपनी वह ईमेल ID लिखें जिससे आपने Brevo पर अकाउंट बनाया है
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "adityaara7667@gmail.com")
 
 
 
