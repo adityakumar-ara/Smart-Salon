@@ -1,6 +1,6 @@
 {
-  "name": "Royal Salon",
-  "short_name": "RoyalSalon",
+  "name": "SalonSync",
+  "short_name": "SalonSync",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
