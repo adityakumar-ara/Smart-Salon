@@ -371,7 +371,7 @@ def edit_salon(request):
                     )
 
         messages.success(request, "Salon aur Gallery successfully update ho gayi hain! 🎉")
-        return redirect('salon_views')
+        return redirect('salon_detail')
 
     # 3. 🔥 DATA LOAD SYSTEM: Database se data nikaal kar HTML ke 5 slots mein bhejanna
     all_saved_images = editsalon.images.all()
