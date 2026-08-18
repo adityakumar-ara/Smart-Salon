@@ -119,6 +119,26 @@ class SalonImage(models.Model):
     def __str__(self):
         return self.salon.salon_name    
 
+
+class SalonFeedback(models.Model):
+    """A customer's single review for a particular salon."""
+
+    salon = models.ForeignKey(Salon, on_delete=models.CASCADE, related_name='feedbacks')
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='salon_feedbacks')
+    rating = models.PositiveSmallIntegerField()
+    comment = models.TextField(max_length=800, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        constraints = [
+            models.UniqueConstraint(fields=['salon', 'customer'], name='unique_customer_salon_feedback'),
+            models.CheckConstraint(condition=models.Q(rating__gte=1, rating__lte=5), name='feedback_rating_between_1_and_5'),
+        ]
+
+    def __str__(self):
+        return f'{self.salon.salon_name} — {self.rating}/5 by {self.customer.username}'
+
 class SiderImage(models.Model):
     image = models.ImageField(upload_to="slider/", null=True, blank=True)
 

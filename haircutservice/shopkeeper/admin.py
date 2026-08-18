@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Salon, SalonService, SalonImage, QueueEntry, SiderImage
+from .models import Salon, SalonService, SalonImage, QueueEntry, SiderImage, SalonFeedback
 from django.utils.html import format_html
 
 # Custom Admin for SiderImage to show a preview
@@ -17,5 +17,6 @@ admin.site.register(Salon)
 admin.site.register(SalonService)
 admin.site.register(SalonImage)
 admin.site.register(QueueEntry)
+admin.site.register(SalonFeedback)
 # The line below is now replaced by the @admin.register decorator above
 # admin.site.register(SiderImage)

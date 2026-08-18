@@ -3,6 +3,7 @@ from .import views
 urlpatterns = [
     path('api/nearby-salons/', views.nearby_salons_api, name='nearby_salons_api'),
     path('salon/<int:salon_id>/', views.salon_detail_public, name='salon_detail_public'),
+    path('salon/<int:salon_id>/feedback/', views.add_feedback, name='add_feedback'),
     path('opensalon/', views.opensalon, name='opensalon'),
     path('salondetail/', views.salon_views, name='salon_detail'),
     path('updatesalon/',views.edit_salon, name='edit_salon'),

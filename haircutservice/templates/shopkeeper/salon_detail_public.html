@@ -1,8 +1,12 @@
 {% extends "main.html" %}
 {% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/salondetail.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container my-5">
+<div class="container my-5 salon-public-page">
     <div class="row">
         <div class="col-lg-8">
             <!-- Salon Header -->
@@ -12,6 +16,11 @@
                 {% endif %}
                 <div>
                     <h1 class="fw-bold">{{ salon.salon_name }}</h1>
+                    <div class="salon-rating-summary mb-2">
+                        <i class="bi bi-star-fill"></i>
+                        {% if average_rating %}<strong>{{ average_rating }}</strong>{% else %}<strong>New</strong>{% endif %}
+                        <span>{{ feedback_count }} review{{ feedback_count|pluralize }}</span>
+                    </div>
                     <p class="text-muted mb-0"><i class="fas fa-user me-1"></i> Owned by {{ salon.owner_name }}</p>
                     <p class="text-muted mb-0"><i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ salon.location_text }}</p>
                 </div>
@@ -93,6 +102,65 @@
                 <p class="text-muted">No services offered at this time.</p>
                 {% endfor %}
             </div>
+
+            <section class="feedback-section mt-5" aria-labelledby="feedback-heading">
+                <div class="feedback-heading">
+                    <div>
+                        <span class="section-kicker">Customer experience</span>
+                        <h3 id="feedback-heading">Reviews & feedback</h3>
+                        <p>Honest experiences from customers of {{ salon.salon_name }}.</p>
+                    </div>
+                    <div class="feedback-score" aria-label="Average rating">
+                        <i class="bi bi-star-fill"></i>
+                        <strong>{% if average_rating %}{{ average_rating }}{% else %}—{% endif %}</strong>
+                        <span>out of 5</span>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated and user.is_customer and not user_has_feedback %}
+                <form method="post" action="{% url 'add_feedback' salon.id %}" class="feedback-form">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>How was your experience?</legend>
+                        <div class="star-picker" aria-label="Choose your rating">
+                            {% for value in "12345" %}
+                            <input type="radio" name="rating" value="{{ value }}" id="rating-{{ value }}" required>
+                            <label for="rating-{{ value }}" title="{{ value }} star{{ value|pluralize }}"><i class="bi bi-star-fill"></i></label>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+                    <label for="feedback-comment" class="form-label">Share a few details <span>(optional)</span></label>
+                    <textarea id="feedback-comment" name="comment" rows="3" maxlength="800" placeholder="Tell others what you enjoyed about this salon."></textarea>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill me-2"></i>Post feedback</button>
+                </form>
+                {% elif user.is_authenticated and user.is_customer and user_has_feedback %}
+                <div class="feedback-notice"><i class="bi bi-check-circle-fill"></i> Thanks — you have already reviewed this salon.</div>
+                {% elif not user.is_authenticated %}
+                <div class="feedback-notice"><i class="bi bi-chat-heart-fill"></i> <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</a> as a customer to leave feedback.</div>
+                {% endif %}
+
+                <div class="feedback-list mt-4">
+                    {% for feedback in feedbacks %}
+                    <article class="feedback-card">
+                        <div class="feedback-avatar">{{ feedback.customer.username|first|upper }}</div>
+                        <div class="feedback-content">
+                            <div class="feedback-meta">
+                                <strong>{{ feedback.customer.name|default:feedback.customer.username }}</strong>
+                                <time datetime="{{ feedback.created_at|date:'c' }}">{{ feedback.created_at|date:"d M Y" }}</time>
+                            </div>
+                            <div class="feedback-stars" aria-label="{{ feedback.rating }} out of 5 stars">
+                                {% for star in "12345" %}
+                                <i class="bi {% if forloop.counter <= feedback.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                            {% if feedback.comment %}<p>{{ feedback.comment }}</p>{% endif %}
+                        </div>
+                    </article>
+                    {% empty %}
+                    <div class="feedback-empty"><i class="bi bi-stars"></i><p>No reviews yet. Be the first to share your experience.</p></div>
+                    {% endfor %}
+                </div>
+            </section>
         </div>
 
         <!-- Sidebar -->

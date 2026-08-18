@@ -2,7 +2,7 @@ from math import radians, sin, cos, asin, sqrt
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from accounts.models import CustomUser
-from .models import Salon, SalonImage, SalonService, QueueEntry, SiderImage
+from .models import Salon, SalonImage, SalonService, QueueEntry, SiderImage, SalonFeedback
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -116,20 +116,62 @@ def salon_detail_public(request, salon_id):
     services = SalonService.objects.filter(salon=salon)
     gallery_images = SalonImage.objects.filter(salon=salon)
     
+    feedbacks = salon.feedbacks.select_related('customer').all()
+    feedback_count = feedbacks.count()
+    average_rating = round(sum(feedback.rating for feedback in feedbacks) / feedback_count, 1) if feedback_count else None
+    user_has_feedback = False
+
     user_queue_ids = []
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
         user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
         current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'is_customer') and request.user.is_customer:
+            user_queue_ids = list(QueueEntry.objects.filter(customer=request.user, status='waiting').values_list('salon_id', flat=True))
+            current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
+        user_has_feedback = salon.feedbacks.filter(customer=request.user).exists()
 
     context = {
         'salon': salon,
         'services': services,
         'gallery_images': gallery_images,
+        'feedbacks': feedbacks,
+        'feedback_count': feedback_count,
+        'average_rating': average_rating,
+        'user_has_feedback': user_has_feedback,
         'user_queue_ids': user_queue_ids,
         'current_booking': current_booking,
     }
     return render(request, 'shopkeeper/salon_detail_public.html', context)
+
+@login_required(login_url='login')
+def add_feedback(request, salon_id):
+    salon = get_object_or_404(Salon, id=salon_id)
+    if request.method != 'POST':
+        return redirect('salon_detail_public', salon_id=salon.id)
+
+    if not (hasattr(request.user, 'is_customer') and request.user.is_customer):
+        messages.error(request, 'Only customers can leave feedback.')
+        return redirect('salon_detail_public', salon_id=salon.id)
+
+    if SalonFeedback.objects.filter(salon=salon, customer=request.user).exists():
+        messages.error(request, 'You have already submitted feedback for this salon.')
+        return redirect('salon_detail_public', salon_id=salon.id)
+
+    try:
+        rating = int(request.POST.get('rating', ''))
+    except (TypeError, ValueError):
+        rating = 0
+    comment = request.POST.get('comment', '').strip()
+
+    if rating not in range(1, 6):
+        messages.error(request, 'Please choose a rating from 1 to 5 stars.')
+        return redirect('salon_detail_public', salon_id=salon.id)
+
+    SalonFeedback.objects.create(salon=salon, customer=request.user, rating=rating, comment=comment)
+    messages.success(request, 'Thank you for sharing your feedback!')
+    return redirect('salon_detail_public', salon_id=salon.id)
 
 @login_required(login_url='login')
 def join_queue(request, service_id):
@@ -225,13 +267,22 @@ def salon_views(request):
     if my_salon:
         salon_gallery = SalonImage.objects.filter(salon=my_salon)
         queue_entries = my_salon.queue_entries.filter(status__in=['waiting', 'seated']).select_related('customer', 'service')
+        feedbacks = my_salon.feedbacks.select_related('customer').all()
+        feedback_count = feedbacks.count()
+        average_rating = round(sum(feedback.rating for feedback in feedbacks) / feedback_count, 1) if feedback_count else None
     else:
         salon_gallery = SalonImage.objects.none()
         queue_entries = QueueEntry.objects.none()
+        feedbacks = SalonFeedback.objects.none()
+        feedback_count = 0
+        average_rating = None
     context = {
         'salon': my_salon,
         'saved_gallery': salon_gallery,
         'queue_entries': queue_entries,
+        'feedbacks': feedbacks,
+        'feedback_count': feedback_count,
+        'average_rating': average_rating,
     }
     return render(request, 'shopkeeper/salonviews.html', context)
 

@@ -128,6 +128,35 @@
         </div>
     </div>
 
+    <section class="owner-feedback-panel mb-5" aria-labelledby="owner-feedback-heading">
+        <div class="feedback-heading">
+            <div>
+                <span class="section-kicker">Your reputation</span>
+                <h3 id="owner-feedback-heading">Customer feedback</h3>
+                <p>See what customers are saying about {{ salon.salon_name }}.</p>
+            </div>
+            <div class="feedback-score">
+                <i class="bi bi-star-fill"></i>
+                <strong>{% if average_rating %}{{ average_rating }}{% else %}—{% endif %}</strong>
+                <span>{{ feedback_count }} review{{ feedback_count|pluralize }}</span>
+            </div>
+        </div>
+        <div class="feedback-list">
+            {% for feedback in feedbacks %}
+            <article class="feedback-card">
+                <div class="feedback-avatar">{{ feedback.customer.username|first|upper }}</div>
+                <div class="feedback-content">
+                    <div class="feedback-meta"><strong>{{ feedback.customer.name|default:feedback.customer.username }}</strong><time>{{ feedback.created_at|date:"d M Y" }}</time></div>
+                    <div class="feedback-stars">{% for star in "12345" %}<i class="bi {% if forloop.counter <= feedback.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>{% endfor %}</div>
+                    {% if feedback.comment %}<p>{{ feedback.comment }}</p>{% endif %}
+                </div>
+            </article>
+            {% empty %}
+            <div class="feedback-empty"><i class="bi bi-stars"></i><p>Your salon has not received feedback yet.</p></div>
+            {% endfor %}
+        </div>
+    </section>
+
     <div class="card shadow p-4 bg-white border-0 rounded-4">
         <h2 class="text-center mb-5 fw-bold text-dark">{{ salon.salon_name }} - Gallery</h2>
 

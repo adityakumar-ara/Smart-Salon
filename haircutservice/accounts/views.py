@@ -151,16 +151,21 @@ def verify_otp(request):
 
 def login(request):
     if request.method == "POST":
-        username= request.POST.get('username')
-        password = request.POST.get('password')
+        email = (request.POST.get('email') or '').strip()
+        password = request.POST.get('password', '')
 
-        user = authenticate(request, username=username, password=password)
+        user = None
+        if email:
+            account = User.objects.filter(email__iexact=email).first()
+            if account:
+                user = authenticate(request, username=account.username, password=password)
+
         if user is not None:
             auth_login(request, user)
             messages.success(request, f"Welcome {user.username}!")
             return redirect('home')
         else:
-            messages.error(request, "Invalid Username or Password. Please try again.")
+            messages.error(request, "Invalid email or password. Please try again.")
             return redirect('home')
 
     all_salons = Salon.objects.all()
