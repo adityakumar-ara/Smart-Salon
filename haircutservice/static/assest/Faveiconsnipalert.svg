@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Notification Red Gradient -->
+    <linearGradient id="alertColor" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff4757; stop-opacity:1" /> 
+      <stop offset="100%" style="stop-color:#ff6b81; stop-opacity:1" /> 
+    </linearGradient>
+  </defs>
+
+  <!-- Centered SnipAlert Icon -->
+  <g transform="translate(6, 6)">
+    <!-- Scissor Handles -->
+    <circle cx="14" cy="12" r="6" stroke="#212529" stroke-width="4" fill="none"/>
+    <circle cx="14" cy="40" r="6" stroke="#212529" stroke-width="4" fill="none"/>
+    
+    <!-- Scissor Blades -->
+    <path d="M 19 12 L 44 40" stroke="#212529" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 19 40 L 44 12" stroke="#212529" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Pivot -->
+    <circle cx="31" cy="26" r="2.5" fill="#212529"/>
+
+    <!-- Alert Sound Wave -->
+    <path d="M 50 14 Q 58 26 50 38" stroke="url(#alertColor)" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

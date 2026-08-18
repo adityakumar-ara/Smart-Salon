@@ -1,20 +1,20 @@
 {
-  "name": "SalonSync",
-  "short_name": "SalonSync",
+  "name": "SnipAlert",
+  "short_name": "SnipAlert",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0d6efd",
   "icons": [
     {
-      "src": "/static/assest/logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/static/assest/Faveiconsnipalert.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     },
     {
-      "src": "/static/assest/logo.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/static/assest/Faveiconsnipalert.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ]
 }
