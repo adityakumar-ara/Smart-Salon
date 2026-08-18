@@ -198,9 +198,9 @@ def join_queue(request, service_id):
 @login_required(login_url='login')
 def leave_queue(request, service_id):
     service = get_object_or_404(SalonService, id=service_id)
-    entry = QueueEntry.objects.filter(service=service, customer=request.user, status='waiting').first()
+    entry = QueueEntry.objects.filter(service=service, customer=request.user, status__in=['waiting', 'seated']).first()
     if not entry:
-        messages.error(request, 'You do not have an active waiting booking for this service.')
+        messages.error(request, 'You do not have an active booking for this service.')
         return redirect(request.META.get('HTTP_REFERER') or 'home')
 
     entry.status = 'cancelled'
@@ -259,6 +259,27 @@ def my_booking(request):
     booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('salon', 'service').first()
     return render(request, 'shopkeeper/my_booking.html', {'booking': booking})
 
+@login_required
+def booking_count_api(request):
+    if not (request.user.is_authenticated and request.user.is_shopkeeper):
+        return JsonResponse({'error': 'Authentication required'}, status=403)
+
+    salon = Salon.objects.filter(owner=request.user).first()
+    if not salon:
+        return JsonResponse({'waiting_count': 0})
+
+    waiting_count = salon.queue_entries.filter(status='waiting').count()
+
+    # Mark that the owner has seen these bookings
+    if 'new_booking_check' in request.session:
+        request.session['seen_bookings'] = list(salon.queue_entries.filter(status='waiting').values_list('id', flat=True))
+
+    return JsonResponse({'waiting_count': waiting_count})
+
+
+
+
+
 
 @login_required(login_url='login')
 def salon_views(request):
@@ -267,7 +288,17 @@ def salon_views(request):
     if my_salon:
         salon_gallery = SalonImage.objects.filter(salon=my_salon)
         queue_entries = my_salon.queue_entries.filter(status__in=['waiting', 'seated']).select_related('customer', 'service')
+        
+        # Logic to identify new bookings
+        seen_bookings = request.session.get('seen_bookings', [])
+        for entry in queue_entries:
+            if entry.status == 'waiting' and entry.id not in seen_bookings:
+                entry.is_new = True
+        
+        request.session['seen_bookings'] = list(queue_entries.filter(status='waiting').values_list('id', flat=True))
+        
         feedbacks = my_salon.feedbacks.select_related('customer').all()
+        waiting_count = queue_entries.filter(status='waiting').count()
         feedback_count = feedbacks.count()
         average_rating = round(sum(feedback.rating for feedback in feedbacks) / feedback_count, 1) if feedback_count else None
     else:
@@ -276,12 +307,14 @@ def salon_views(request):
         feedbacks = SalonFeedback.objects.none()
         feedback_count = 0
         average_rating = None
+        waiting_count = 0
     context = {
         'salon': my_salon,
         'saved_gallery': salon_gallery,
         'queue_entries': queue_entries,
         'feedbacks': feedbacks,
         'feedback_count': feedback_count,
+        'waiting_count': waiting_count,
         'average_rating': average_rating,
     }
     return render(request, 'shopkeeper/salonviews.html', context)

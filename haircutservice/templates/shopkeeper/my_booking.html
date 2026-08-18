@@ -1,5 +1,7 @@
 {% extends "main.html" %}
 
+{% load static %} 
+
 {% block content %}
 <div class="container my-5" style="max-width: 760px;">
     <h1 class="fw-bold mb-4">My Booking Status</h1>
@@ -13,21 +15,55 @@
                 </div>
                 {% if booking.status == 'waiting' %}<span class="badge bg-warning text-dark fs-6">Waiting</span>{% else %}<span class="badge bg-success fs-6">Accepted</span>{% endif %}
             </div>
+            
             {% if booking.status == 'waiting' %}
             <div class="rounded-3 bg-warning-subtle p-4 mb-4 text-center">
                 <div class="text-muted text-uppercase small fw-bold">Your queue number</div>
-                <div class="display-3 fw-bold">#{{ booking.position }}</div>
-                <p class="mb-0"><strong>{{ booking.people_before }}</strong> customer{{ booking.people_before|pluralize }} ahead of you.</p>
+                <div class="display-3 fw-bold mb-3">#{{ booking.position }}</div>
+
+                {% if booking.people_before < 3 %}
+                    <p class="mb-0 fw-bold text-primary">Your turn is very soon! Please reach the salon immediately.</p>
+                {% elif booking.people_before == 3 %}
+                    <audio id="customerSound" src="{% static 'assest/customer_alert.mp3' %}" preload="auto"></audio>
+                    <div id="customerAlertBox" class="mb-2">
+                        <p class="fw-bold">Only 3 people are ahead of you. Are you on your way to the salon?</p>
+                        <button onclick="playCustomerAlert()" class="btn btn-info">Play Alert Sound</button>
+                    </div>
+                    <div id="customerActionBox" style="display: none; padding: 15px; border-radius: 8px; background-color: white; border: 2px solid #dc3545;">
+                        <p class="mb-3"><strong>सिस्टम:</strong> आपके आगे केवल 3 लोग हैं। क्या आप अभी सैलून जा रहे हैं?</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <button onclick="handleUserResponse('yes')" class="btn btn-success">Yes (हाँ)</button>
+                            <button onclick="handleUserResponse('no')" class="btn btn-danger">No (नहीं)</button>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="mb-0"><strong>{{ booking.people_before }}</strong> customer{{ booking.people_before|pluralize }} ahead of you.</p>
+                {% endif %}
             </div>
-            <p class="text-muted">You are waiting for the shopkeeper to accept your booking. Your number updates as the queue moves.</p>
-            <a href="{% url 'leave_queue' booking.service.id %}" class="btn btn-outline-danger" onclick="return confirm('Leave this queue?');">Leave Queue</a>
+
+            {% if booking.status == 'waiting' %}
+                <p class="text-muted">You are waiting for the shopkeeper to accept your booking. Your number updates as the queue moves. Please do not close this page.</p>
+                {% if booking.position > 3 %}
+                <a href="{% url 'leave_queue' booking.service.id %}" class="btn btn-outline-danger" onclick="return confirm('Leave this queue?');">Leave Queue</a>
+                {% else %}
+                <p class="text-danger fw-bold">You cannot leave the queue now as your turn is very close.</p>
+                {% endif %}
+            {% endif %}
+
             {% else %}
             <div class="rounded-3 bg-success-subtle p-4 mb-4">
                 <h4 class="text-success">Your booking is accepted</h4>
                 <p class="mb-0">The shopkeeper has accepted your booking. <strong>{{ booking.accepted_people_ahead }}</strong> accepted customer{{ booking.accepted_people_ahead|pluralize }} ahead of you.</p>
             </div>
+            <div class="alert alert-info">
+                The shopkeeper has confirmed your spot. Please head to the salon.
+            </div>
+            <div>
+                <a href="{% url 'leave_queue' booking.service.id %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to cancel this accepted booking?');">Cancel Booking</a>
+            </div>
             {% endif %}
-            <a href="{% url 'salon_detail_public' booking.salon.id %}" class="btn btn-primary">View Salon</a>
+            
+            <a href="{% url 'salon_detail_public' booking.salon.id %}" class="btn btn-primary mt-3">View Salon</a>
         </div>
     </div>
     {% else %}
@@ -39,4 +75,44 @@
     </div>
     {% endif %}
 </div>
+{% block extra_js %}
+<script>
+    const sound = document.getElementById('customerSound');
+    let soundTimeout;
+
+    function playCustomerAlert() {
+        document.getElementById('customerAlertBox').style.display = 'none';
+        document.getElementById('customerActionBox').style.display = 'block';
+
+        if (sound) {
+            sound.play().catch(e => console.error("Audio play failed:", e));
+            // Stop the sound and consider it a "No" after 1 minute
+            soundTimeout = setTimeout(() => {
+                handleUserResponse('no');
+            }, 60000); // 1 minute
+        }
+    }
+
+    function stopSound() {
+        if (sound) {
+            sound.pause();
+            sound.currentTime = 0;
+        }
+        if (soundTimeout) {
+            clearTimeout(soundTimeout);
+        }
+    }
+
+    function handleUserResponse(response) {
+        stopSound();
+        const actionBox = document.getElementById('customerActionBox');
+        if (response === 'yes') {
+            actionBox.innerHTML = '<p class="text-success fw-bold">Great! Your position is confirmed. Please proceed to the salon.</p>';
+        } else {
+            actionBox.innerHTML = '<p class="text-danger fw-bold">Your appointment has been moved to position 4 to allow others to go first. Please confirm again when you are ready.</p>';
+            // Here you would ideally make an API call to update the queue on the backend.
+        }
+    }
+</script>
+{% endblock %}
 {% endblock %}
