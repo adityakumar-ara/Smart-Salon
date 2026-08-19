@@ -1,0 +1,51 @@
+:root {
+    --snip-primary: #0f766e;
+    --snip-deep: #0b4f4a;
+    --snip-warm: #f59e0b;
+    --snip-ink: #173b3a;
+}
+
+.csrf-page {
+    min-height: 100vh;
+    background: radial-gradient(circle at 12% 12%, rgba(45, 212, 191, .2), transparent 30%),
+                radial-gradient(circle at 90% 90%, rgba(245, 158, 11, .15), transparent 26%),
+                #f4fbfa;
+    color: var(--snip-ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.csrf-card {
+    width: min(100%, 540px);
+    padding: clamp(2rem, 6vw, 3.5rem);
+    background: rgba(255, 255, 255, .94);
+    border: 1px solid rgba(15, 118, 110, .12);
+    border-radius: 28px;
+    box-shadow: 0 25px 60px rgba(15, 78, 74, .15);
+}
+
+.brand-mark { margin-bottom: 1.75rem; }
+.brand-logo { width: min(180px, 62vw); height: auto; }
+
+.status-icon {
+    display: grid;
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 1.25rem;
+    place-items: center;
+    color: #b45309;
+    background: #fff7e6;
+    border-radius: 50%;
+}
+
+.status-icon svg { width: 29px; height: 29px; }
+.eyebrow { color: var(--snip-primary); font-size: .72rem; font-weight: 800; letter-spacing: .13em; }
+.csrf-card h1 { font-size: clamp(1.65rem, 4vw, 2.15rem); font-weight: 750; letter-spacing: -.035em; }
+.message { max-width: 390px; margin-inline: auto; color: #607574; line-height: 1.6; }
+.message-hindi { color: #476361; font-size: .94rem; }
+
+.csrf-card .btn { min-width: 156px; padding: .76rem 1.2rem; border-radius: 12px; font-weight: 700; transition: transform .18s ease, box-shadow .18s ease; }
+.csrf-card .btn:hover { transform: translateY(-2px); }
+.btn-refresh { color: #fff; background: var(--snip-primary); border-color: var(--snip-primary); box-shadow: 0 8px 18px rgba(15, 118, 110, .22); }
+.btn-refresh:hover, .btn-refresh:focus { color: #fff; background: var(--snip-deep); border-color: var(--snip-deep); }
+.btn-home { color: var(--snip-primary); background: #fff; border: 1px solid rgba(15, 118, 110, .28); }
+.btn-home:hover, .btn-home:focus { color: var(--snip-deep); background: #edf9f7; border-color: var(--snip-primary); }

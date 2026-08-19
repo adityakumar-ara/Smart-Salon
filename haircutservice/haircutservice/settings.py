@@ -138,7 +138,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
@@ -190,3 +190,6 @@ CLOUDINARY_STORAGE = {
 }
 # यह लाइन Django को बताएगी कि फाइल लोकल में नहीं, Cloudinary पर सेव करनी है
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Display SnipAlert's branded page instead of Django's default CSRF error screen.
+CSRF_FAILURE_VIEW = 'haircutservice.views.csrf_failure'
