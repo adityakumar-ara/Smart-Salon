@@ -498,3 +498,10 @@ def about_service_page(request,service_id):
         'current_booking': current_booking,
     }
     return render(request,'shopkeeper/about_seervice_page.html', context)
+
+from django.http import JsonResponse
+def check_new_customers(request, salon_id):
+    
+    pending_count = join_queue.objects.filter(salon_id=salon_id, status='Pending').count()
+    
+    return JsonResponse({'pending_count': pending_count})

@@ -21,4 +21,6 @@ urlpatterns = [
     path('my-booking/', views.my_booking, name='my_booking'),
     path('aboutservice/<int:service_id>/', views.about_service_page, name='about_service_page'),
     path('booking_count_api', views.booking_count_api, name='booking_count_api'),
+    
+    path('api/check-queue/<int:salon_id>/', views.check_new_customers, name='check_queue'),
 ]
