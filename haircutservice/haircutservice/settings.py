@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'shopkeeper',
     'cloudinary',
     'anymail',
+    'webpush',
 ]
 
 MIDDLEWARE = [
@@ -193,3 +194,13 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Display SnipAlert's branded page instead of Django's default CSRF error screen.
 CSRF_FAILURE_VIEW = 'haircutservice.views.csrf_failure'
+
+
+import os
+
+# Webpush Settings 
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": os.getenv("VAPID_PUBLIC_KEY"),
+    "VAPID_PRIVATE_KEY": os.getenv("VAPID_PRIVATE_KEY"),
+    "VAPID_ADMIN_EMAIL": os.getenv("VAPID_ADMIN_EMAIL")
+}

@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('customer/', include('customer.urls')),
     path('shopkeeper/', include('shopkeeper.urls')),
+    path('webpush/', include('webpush.urls')),
 ]
 
 if settings.DEBUG:

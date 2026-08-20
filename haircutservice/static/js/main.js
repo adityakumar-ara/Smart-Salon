@@ -277,33 +277,3 @@ document.addEventListener('DOMContentLoaded', function () {
       return "I can help with salon discovery, booking, service details, and timings. Try asking: book a service, show services, or timings.";
   }
 });
-
-
-
-let previousCount = 0;
-    const salonId = "{{ salon.id }}"; 
-    const apiUrl = `/shopkeeper/api/check-queue/${salonId}/`;
-
-    function checkForNewAppointments() {
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                let currentCount = data.pending_count;
-
-                if (currentCount > previousCount) {
-                    console.log("🔥 नया कस्टमर आया है! अलार्म बजाओ!");
-                    
-                   
-                    let alarm = document.getElementById("salonAlarm");
-                    alarm.play().catch(error => console.log("ब्राउज़र ने आवाज़ रोकी:", error));
-                    
-                  
-                    window.location.reload(); 
-                }
-
-                previousCount = currentCount;
-            })
-            .catch(error => console.error("API Error:", error));
-    }
-
-    setInterval(checkForNewAppointments, 5000);

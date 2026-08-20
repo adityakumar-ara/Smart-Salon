@@ -8,9 +8,6 @@
 {% block content %}
 <div class="container mt-4">
     {% if salon %}
-    <!-- 1. Ringtone ke liye Audio element -->
-    <audio id="bookingAlertSound" src="{% static 'assest/owner_alert.mp3' %}" preload="auto"></audio>
-
     <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
         aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -227,41 +224,4 @@
     {% endif %}
 </div>
 
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 2. Shuru me kitni bookings hain, unki ginti store karein
-    let currentBookingCount = {{ queue_entries.count }};
-    const bookingApiUrl = "{% url 'booking_count_api' %}";
-    const sound = document.getElementById('bookingAlertSound');
-
-    // 3. Har 7 second me check karne ke liye function
-    setInterval(function() {
-        fetch(bookingApiUrl)
-            .then(response => response.json())
-            .then(data => {
-                const newBookingCount = data.waiting_count;
-
-                // 4. Agar nayi booking aayi hai (count badh gaya hai)
-                if (newBookingCount > currentBookingCount) {
-                    console.log('New booking detected!');
-                    
-                    // Ringtone bajayein
-                    sound.play().catch(e => console.error("Audio play failed:", e));
-                    
-                    // Page ko reload karein taaki nayi booking dikhe
-                    // Thoda delay de rahe hain taaki ringtone sunai de
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000); 
-                }
-                
-                // Ginti ko update karein
-                currentBookingCount = newBookingCount;
-            })
-            .catch(error => console.error('Error checking for new bookings:', error));
-    }, 7000); // Har 7 second me check karega
-});
-</script>
-{% endblock %}
 {% endblock %}

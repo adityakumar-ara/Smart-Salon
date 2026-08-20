@@ -5,6 +5,7 @@ from accounts.models import CustomUser
 from .models import Salon, SalonImage, SalonService, QueueEntry, SiderImage, SalonFeedback
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from webpush import send_user_notification
 
 
 def _haversine_km(lat1, lon1, lat2, lon2):
@@ -172,11 +173,17 @@ def add_feedback(request, salon_id):
     SalonFeedback.objects.create(salon=salon, customer=request.user, rating=rating, comment=comment)
     messages.success(request, 'Thank you for sharing your feedback!')
     return redirect('salon_detail_public', salon_id=salon.id)
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from webpush import send_user_notification
+# आपके मॉडल्स इम्पोर्ट...
 
 @login_required(login_url='login')
 def join_queue(request, service_id):
     service = get_object_or_404(SalonService, id=service_id)
     salon = service.salon
+    salon_owner = salon.owner
     if not hasattr(request.user, 'is_customer') or not request.user.is_customer:
         messages.error(request, 'Only customers can book sit for a service.')
         return redirect(request.META.get('HTTP_REFERER') or 'home')
@@ -189,11 +196,21 @@ def join_queue(request, service_id):
     if active_booking:
         messages.info(request, 'You already have an active booking. Leave it before booking another service.')
         return redirect(request.META.get('HTTP_REFERER') or 'home')
-
     entry = QueueEntry.objects.create(salon=salon, service=service, customer=request.user)
+
+    payload = {
+        "head": "🔥 नया कस्टमर आ गया!",
+        "body": f"कतार में एक नया अपॉइंटमेंट जुड़ गया है। Waiting Position: {entry.position}", 
+        "icon": "/static/assest/logosnipalert.svg",
+        "url": "/shopkeeper/dashboard/"
+    }
+    
+    try:
+        send_user_notification(user=salon_owner, payload=payload, ttl=1000)
+    except Exception as e:
+        print(f"नोटिफिकेशन भेजने में एरर: {e}")
     messages.success(request, f'Booked sit for {service.name} at {salon.salon_name}. Your waiting position is {entry.position}.')
     return redirect(request.META.get('HTTP_REFERER') or 'home')
-
 
 @login_required(login_url='login')
 def leave_queue(request, service_id):
@@ -259,27 +276,6 @@ def my_booking(request):
     booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('salon', 'service').first()
     return render(request, 'shopkeeper/my_booking.html', {'booking': booking})
 
-@login_required
-def booking_count_api(request):
-    if not (request.user.is_authenticated and request.user.is_shopkeeper):
-        return JsonResponse({'error': 'Authentication required'}, status=403)
-
-    salon = Salon.objects.filter(owner=request.user).first()
-    if not salon:
-        return JsonResponse({'waiting_count': 0})
-
-    waiting_count = salon.queue_entries.filter(status='waiting').count()
-
-    # Mark that the owner has seen these bookings
-    if 'new_booking_check' in request.session:
-        request.session['seen_bookings'] = list(salon.queue_entries.filter(status='waiting').values_list('id', flat=True))
-
-    return JsonResponse({'waiting_count': waiting_count})
-
-
-
-
-
 
 @login_required(login_url='login')
 def salon_views(request):
@@ -298,7 +294,6 @@ def salon_views(request):
         request.session['seen_bookings'] = list(queue_entries.filter(status='waiting').values_list('id', flat=True))
         
         feedbacks = my_salon.feedbacks.select_related('customer').all()
-        waiting_count = queue_entries.filter(status='waiting').count()
         feedback_count = feedbacks.count()
         average_rating = round(sum(feedback.rating for feedback in feedbacks) / feedback_count, 1) if feedback_count else None
     else:
@@ -307,14 +302,12 @@ def salon_views(request):
         feedbacks = SalonFeedback.objects.none()
         feedback_count = 0
         average_rating = None
-        waiting_count = 0
     context = {
         'salon': my_salon,
         'saved_gallery': salon_gallery,
         'queue_entries': queue_entries,
         'feedbacks': feedbacks,
         'feedback_count': feedback_count,
-        'waiting_count': waiting_count,
         'average_rating': average_rating,
     }
     return render(request, 'shopkeeper/salonviews.html', context)
@@ -499,9 +492,3 @@ def about_service_page(request,service_id):
     }
     return render(request,'shopkeeper/about_seervice_page.html', context)
 
-from django.http import JsonResponse
-def check_new_customers(request, salon_id):
-    
-    pending_count = join_queue.objects.filter(salon_id=salon_id, status='Pending').count()
-    
-    return JsonResponse({'pending_count': pending_count})

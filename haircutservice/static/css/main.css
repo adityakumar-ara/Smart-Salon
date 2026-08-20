@@ -119,6 +119,42 @@ body {
     border-color: rgba(37, 99, 235, 0.2);
 }
 
+.push-notification-control {
+    position: fixed !important;
+    left: 22px;
+    bottom: 24px;
+    z-index: 1001;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 9px 8px 13px;
+    border: 1px solid rgba(37, 99, 235, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 14px 32px rgba(37, 99, 235, 0.18);
+    backdrop-filter: blur(12px);
+}
+
+.push-notification-label {
+    color: var(--primary-dark);
+    font-size: 0.76rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.push-notification-label i {
+    margin-right: 4px;
+    color: var(--accent);
+}
+
+.push-notification-control button {
+    padding: 0.34rem 0.72rem;
+    border-color: rgba(37, 99, 235, 0.32);
+    color: var(--primary-dark);
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
 .profile-nav-link {
     display: none;
 }
@@ -486,6 +522,17 @@ textarea:focus {
         border-bottom: 2px solid var(--primary);
     }
 
+    .push-notification-control {
+        left: 12px !important;
+        bottom: 12px !important;
+        transform: scale(0.72);
+        transform-origin: bottom left;
+    }
+
+    .push-notification-label {
+        font-size: 0.7rem;
+    }
+
     .site-footer .row {
         gap: 12px;
     }
@@ -499,5 +546,3 @@ textarea:focus {
         background: none !important;
     }
 }
-
-
