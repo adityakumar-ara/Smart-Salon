@@ -117,18 +117,8 @@
     <a href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Signup</a>
     {% endif %}
   </nav>
-  {% if messages %}
-  <div class="container mt-3">
-    {% for message in messages %}
-    <div
-      class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %} alert-dismissible fade show shadow-sm"
-      role="alert">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
+  
+  {% include 'partials/messages.html' %}
   <div class="container-fluid p-0">{% block content %} {% endblock %}</div>
 
   <!-- Profile ya dukan dekhne ka button -->
