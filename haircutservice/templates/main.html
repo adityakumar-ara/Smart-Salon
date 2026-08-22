@@ -49,10 +49,10 @@
               href="{% url 'female_section' %}">Female</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="#">Services</a>
+            <a class="nav-link" href="{% url 'services' %}">Services</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="#">Contact</a>
+            <a class="nav-link" href="{% url 'contact' %}">Contact</a>
           </li>
 
           {% if user.is_authenticated and user.is_customer %}
@@ -105,8 +105,8 @@
       href="{% url 'male_section' %}">Male</a>
     <a class="{% if request.path == '/shopkeeper/femaleservice/' %}active{% endif %}"
       href="{% url 'female_section' %}">Female</a>
-    <a href="#">Services</a>
-    <a href="#">Contact</a>
+    <a href="{% url 'services' %}">Services</a>
+    <a href="{% url 'contact' %}">Contact</a>
     {% if user.is_authenticated and user.is_shopkeeper and has_salon %}
     <a href="{% url 'add_service' %}">Add Service</a>
     <a href="{% url 'service_views' %}">View Services</a>
@@ -143,16 +143,17 @@
   <!-- footer section -->
   <footer class="site-footer">
     <div class="footer-top container">
-      <div class="row">
+      <div class="row g-4">
         <div class="col-md-4 footer-col">
-          <h5>Royal Salon</h5>
-          <p>
-            Professional grooming, easy bookings, and trusted local salons.
-          </p>
+          <a href="{% url 'home' %}" class="footer-logo" aria-label="SnipAlert home">
+            <img src="{% static 'assest/logosnipalert.svg' %}" alt="SnipAlert" />
+          </a>
+          <p class="footer-brand-copy">Discover trusted local salons, book your preferred service, and skip the waiting line.</p>
+          <div class="footer-trust-note"><i class="bi bi-shield-check" aria-hidden="true"></i> Simple bookings. Better salon visits.</div>
         </div>
 
         <div class="col-md-2 footer-col">
-          <h5>Quick Links</h5>
+          <h5>Explore</h5>
           <ul class="list-unstyled">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'male_section' %}">Male Services</a></li>
@@ -162,23 +163,35 @@
 
         <div class="col-md-3 footer-col">
           <h5>Contact</h5>
-          <p>123 Main Street, Your City</p>
-          <p>Phone: +91 98765 43210</p>
-          <p>Email: info@royalsalon.example</p>
+          <p><i class="bi bi-geo-alt me-2" aria-hidden="true"></i>Modipuram, Meerut 250110</p>
+          <p><a href="tel:+91920422597"><i class="bi bi-telephone me-2" aria-hidden="true"></i>+91 920422597</a></p>
+          <p><a href="mailto:supportsalon@gmail.com"><i class="bi bi-envelope me-2" aria-hidden="true"></i>supportsalon@gmail.com</a></p>
         </div>
 
         <div class="col-md-3 footer-col">
-          <h5>Follow Us</h5>
+          <div class="footer-founder">
+            <img src="{% static 'assest/myphoto.png' %}" alt="Founder and Developer" class="founder-photo" />
+            <div>
+              <span class="founder-role">Founder &amp; Developer</span>
+              <p>Built with care for better salon experiences.</p>
+            </div>
+          </div>
+          <h5 class="footer-follow-title">Follow Us</h5>
           <div class="social-icons">
-            <a href="#" aria-label="facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" aria-label="instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" aria-label="twitter"><i class="bi bi-twitter"></i></a>
+            <a href="https://www.facebook.com/profile.php?id=61558724680466" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/_._adityamaurya_._/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/aditya-kumar-47a44b380/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
           </div>
         </div>
       </div>
     </div>
-    <div class="footer-bottom container text-center">
-      <p>© 2026 Royal Salon. All Rights Reserved.</p>
+    <div class="footer-bottom container">
+      <p>© 2026 SnipAlert. All Rights Reserved.</p>
+      <nav class="footer-legal-links" aria-label="Legal links">
+        <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+        <a href="{% url 'terms_of_service' %}">Terms of Service</a>
+        <a href="{% url 'cookie_policy' %}">Cookie Policy</a>
+      </nav>
     </div>
   </footer>
 

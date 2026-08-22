@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from shopkeeper import views
+from . import views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,11 @@ urlpatterns = [
     path('customer/', include('customer.urls')),
     path('shopkeeper/', include('shopkeeper.urls')),
     path('webpush/', include('webpush.urls')),
+    path('services/', core_views.information_page, {'title': 'Services'}, name='services'),
+    path('contact/', core_views.information_page, {'title': 'Contact'}, name='contact'),
+    path('privacy-policy/', core_views.information_page, {'title': 'Privacy Policy'}, name='privacy_policy'),
+    path('terms-of-service/', core_views.information_page, {'title': 'Terms of Service'}, name='terms_of_service'),
+    path('cookie-policy/', core_views.information_page, {'title': 'Cookie Policy'}, name='cookie_policy'),
 ]
 
 if settings.DEBUG:

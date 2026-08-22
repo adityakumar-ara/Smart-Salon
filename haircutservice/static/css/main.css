@@ -274,11 +274,97 @@ textarea:focus {
 }
 
 .site-footer .footer-top {
-    padding: 18px 15px;
+    padding: 22px 15px;
 }
 
 .site-footer .footer-col {
     margin-bottom: 18px;
+}
+
+.site-footer .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.site-footer .footer-logo img {
+    width: 150px;
+    height: auto;
+}
+
+.site-footer .footer-brand-copy {
+    max-width: 300px;
+    margin-bottom: 16px;
+    line-height: 1.65;
+}
+
+.site-footer .footer-trust-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #dbeafe;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.site-footer .footer-trust-note i {
+    color: #60a5fa;
+    font-size: 16px;
+}
+
+.site-footer .footer-col .list-unstyled {
+    display: grid;
+    gap: 9px;
+    margin: 0;
+}
+
+.site-footer .footer-col .list-unstyled a {
+    display: inline-flex;
+    align-items: center;
+}
+
+.site-footer .footer-col .list-unstyled a:hover {
+    transform: translateX(3px);
+}
+
+.site-footer .footer-founder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.site-footer .founder-photo {
+    width: 104px;
+    height: 104px;
+    flex: 0 0 104px;
+    object-fit: cover;
+    object-position: center 28%;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+}
+
+.site-footer .founder-role {
+    display: block;
+    margin-bottom: 3px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.site-footer .footer-founder p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.site-footer .footer-follow-title {
+    margin-top: 2px;
 }
 
 .site-footer .social-icons a {
@@ -297,10 +383,136 @@ textarea:focus {
 }
 
 .site-footer .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
     padding-top: 16px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     margin-top: 12px;
     font-size: 14px;
+}
+
+.site-footer .footer-bottom p {
+    margin: 0;
+}
+
+.site-footer .footer-legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+.site-footer .footer-legal-links a {
+    font-size: 13px;
+}
+
+.information-page {
+    display: grid;
+    position: relative;
+    min-height: 300px;
+    place-items: center;
+    overflow: hidden;
+    padding: 76px 24px;
+    isolation: isolate;
+    background:
+        radial-gradient(circle at 12% 12%, rgba(96, 165, 250, 0.2), transparent 26%),
+        radial-gradient(circle at 88% 84%, rgba(167, 139, 250, 0.24), transparent 30%),
+        linear-gradient(125deg, #0f172a 0%, #172554 48%, #312e81 100%);
+}
+
+.information-page::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.04) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.04) 75%);
+    background-size: 28px 28px, 56px 56px;
+    content: "";
+    opacity: 0.8;
+}
+
+.information-page::after {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: min(76%, 700px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.62), transparent);
+    content: "";
+    transform: translateX(-50%);
+}
+
+.information-page h1 {
+    position: relative;
+    margin: 0;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    text-align: center;
+    text-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);
+}
+
+.information-page h1::before {
+    display: block;
+    margin-bottom: 12px;
+    color: #93c5fd;
+    font-family: inherit;
+    font-size: 0.22em;
+    font-weight: 700;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    content: "SnipAlert";
+}
+
+.service-page-heading {
+    position: relative;
+    display: grid;
+    min-height: 300px;
+    place-content: center;
+    overflow: hidden;
+    padding: 76px 24px;
+    color: #fff;
+    text-align: center;
+    isolation: isolate;
+    background:
+        radial-gradient(circle at 12% 12%, rgba(96, 165, 250, 0.2), transparent 26%),
+        radial-gradient(circle at 88% 84%, rgba(167, 139, 250, 0.24), transparent 30%),
+        linear-gradient(125deg, #0f172a 0%, #172554 48%, #312e81 100%);
+}
+
+.service-page-heading::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.04) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.04) 75%);
+    background-size: 28px 28px, 56px 56px;
+    content: "";
+}
+
+.service-page-heading span {
+    margin-bottom: 12px;
+    color: #93c5fd;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+}
+
+.service-page-heading h1 {
+    margin: 0;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    text-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);
 }
 
  .chatbot-fab {
@@ -535,6 +747,16 @@ textarea:focus {
 
     .site-footer .row {
         gap: 12px;
+    }
+
+    .site-footer .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .site-footer .footer-legal-links {
+        justify-content: flex-start;
+        gap: 10px 14px;
     }
 
     .navbar-nav {
