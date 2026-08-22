@@ -49,7 +49,7 @@
               href="{% url 'female_section' %}">Female</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="{% url 'services' %}">Services</a>
+            <a class="nav-link" href="{% url 'help' %}">Help</a>
           </li>
           <li class="nav-item mx-2">
             <a class="nav-link" href="{% url 'contact' %}">Contact</a>
@@ -105,7 +105,7 @@
       href="{% url 'male_section' %}">Male</a>
     <a class="{% if request.path == '/shopkeeper/femaleservice/' %}active{% endif %}"
       href="{% url 'female_section' %}">Female</a>
-    <a href="{% url 'services' %}">Services</a>
+    <a href="{% url 'help' %}">Help</a>
     <a href="{% url 'contact' %}">Contact</a>
     {% if user.is_authenticated and user.is_shopkeeper and has_salon %}
     <a href="{% url 'add_service' %}">Add Service</a>
@@ -158,6 +158,7 @@
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'male_section' %}">Male Services</a></li>
             <li><a href="{% url 'female_section' %}">Female Services</a></li>
+            <li><a href="{% url 'help' %}">Help Centre</a></li>
           </ul>
         </div>
 
@@ -217,6 +218,10 @@
               <input type="password" class="form-control" id="loginPassword" name="password"
                 autocomplete="current-password" required />
             </div>
+            <div class="form-check legal-consent mb-3">
+              <input class="form-check-input" type="checkbox" value="yes" id="loginLegalAcceptance" name="legal_acceptance" required />
+              <label class="form-check-label" for="loginLegalAcceptance">I agree to the <a href="{% url 'terms_of_service' %}" target="_blank">Terms of Service</a> and <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>.</label>
+            </div>
             <div class="d-grid">
               <button type="submit" class="btn btn-primary">Login</button>
             </div>
@@ -270,6 +275,10 @@
                 <option value="customer">Customer</option>
                 <option value="shopkeeper">Shopkeeper</option>
               </select>
+            </div>
+            <div class="form-check legal-consent mb-3">
+              <input class="form-check-input" type="checkbox" value="yes" id="signupLegalAcceptance" name="legal_acceptance" required />
+              <label class="form-check-label" for="signupLegalAcceptance">I agree to the <a href="{% url 'terms_of_service' %}" target="_blank">Terms of Service</a> and <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>.</label>
             </div>
             <div class="d-grid">
               <button type="submit" class="btn btn-primary">Signup</button>

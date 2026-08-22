@@ -7,6 +7,7 @@ urlpatterns = [
     path('opensalon/', views.opensalon, name='opensalon'),
     path('salondetail/', views.salon_views, name='salon_detail'),
     path('updatesalon/',views.edit_salon, name='edit_salon'),
+    path('remove-salon/', views.remove_salon, name='remove_salon'),
     path('add_service/',views.add_service, name='add_service'),
     path('services/', views.service_views, name="service_views"),
     path('edit_service/<int:service_id>/', views.edit_service, name='edit_service'),

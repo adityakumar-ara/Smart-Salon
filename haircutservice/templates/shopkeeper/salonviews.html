@@ -134,6 +134,7 @@
 
         <div class="mt-4 text-end d-flex flex-column flex-md-row justify-content-end gap-2">
           <a href="{% url 'edit_salon' %}" role="button" class="btn btn-lg px-4 py-2 text-white fw-bold shadow-sm rounded-3" style="background: linear-gradient(90deg, #0f23fa 0%, #0e8684 100%); transition: transform 0.2s;"><i class="bi bi-pencil-square me-2"></i>Update Salon</a>
+          <a href="{% url 'remove_salon' %}" role="button" class="btn btn-lg px-4 py-2 btn-outline-danger fw-bold shadow-sm rounded-3"><i class="bi bi-trash3 me-2"></i>Remove Salon</a>
           {% if salon.location_map_url %}
             <a href="{{ salon.location_map_url }}" target="_blank" role="button" class="btn btn-lg px-4 py-2 btn-outline-primary fw-bold shadow-sm rounded-3"><i class="bi bi-geo-alt me-2"></i>View {{ salon.salon_name }} on Map</a>
           {% endif %}

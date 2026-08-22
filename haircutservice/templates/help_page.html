@@ -1,0 +1,99 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+  <section class="help-hero">
+    <span>SnipAlert guide</span>
+    <h1>How can we help?</h1>
+    <p>Choose the right path to book a service or grow your salon online.</p>
+  </section>
+
+  <section class="help-content container">
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-4 col-md-6">
+        <article class="help-card">
+          <div class="help-card-icon"><i class="bi bi-scissors"></i></div>
+          <h2>Book a salon service</h2>
+          <p>Need a haircut, beard trim, facial, or another service? Choose the section that matches the service you want, then select a salon and book your seat.</p>
+          <div class="help-actions">
+            <a href="{% url 'male_section' %}" class="btn btn-primary">Male Services</a>
+            <a href="{% url 'female_section' %}" class="btn btn-outline-primary">Female Services</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <article class="help-card">
+          <div class="help-card-icon"><i class="bi bi-shop"></i></div>
+          <h2>Register your salon</h2>
+          <p>Create an account as a shopkeeper, then use the Register Salon button. Add your salon name, photo, timings, location, and services so customers can find you.</p>
+          {% if user.is_authenticated and user.is_shopkeeper %}
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#salonModal">Register Salon</a>
+          {% else %}
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">Create Shopkeeper Account</a>
+          {% endif %}
+        </article>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <article class="help-card">
+          <div class="help-card-icon"><i class="bi bi-shield-check"></i></div>
+          <h2>Manage your salon</h2>
+          <p>Open Your Profile, then select View Shop to update your details or manage services. Salon removal needs your confirmation and an OTP sent to your registered email.</p>
+          {% if user.is_authenticated and user.is_shopkeeper and has_salon %}
+            <a href="{% url 'salon_detail' %}" class="btn btn-outline-primary">View My Shop</a>
+          {% else %}
+            <a href="{% url 'profile' %}" class="btn btn-outline-primary">Open Profile</a>
+          {% endif %}
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="account-guide container">
+    <div class="account-guide-intro">
+      <span>Account setup</span>
+      <h2>Create the right SnipAlert account</h2>
+      <p>Click <strong>Signup</strong>, complete your details, then select the role that fits you in the final dropdown.</p>
+    </div>
+
+    <div class="row g-4 align-items-stretch">
+      <div class="col-lg-4">
+        <article class="account-role-card">
+          <div class="help-card-icon"><i class="bi bi-person"></i></div>
+          <h3>General customer</h3>
+          <ol>
+            <li>Click the <strong>Signup</strong> button.</li>
+            <li>Enter your name, username, mobile number, email, and password.</li>
+            <li>Select <strong>Customer</strong> in the dropdown.</li>
+            <li>Submit the form and verify the OTP sent to your email.</li>
+          </ol>
+          <p class="account-role-note">After verification, use Male Services or Female Services to book a haircut, facial, beard trim, or other service.</p>
+          {% if not user.is_authenticated %}<a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">Create Customer Account</a>{% endif %}
+        </article>
+      </div>
+
+      <div class="col-lg-4">
+        <article class="account-role-card account-role-card-shopkeeper">
+          <div class="help-card-icon"><i class="bi bi-shop"></i></div>
+          <h3>Shopkeeper</h3>
+          <ol>
+            <li>Click the <strong>Signup</strong> button and fill in your details.</li>
+            <li>Select <strong>Shopkeeper</strong> in the dropdown.</li>
+            <li>Submit the form and verify the OTP from your email.</li>
+            <li>Open your profile and select <strong>Register Salon</strong>.</li>
+          </ol>
+          <p class="account-role-note">Add your salon details, location, opening hours, and services to start receiving bookings.</p>
+          {% if not user.is_authenticated %}<a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">Create Shopkeeper Account</a>{% endif %}
+        </article>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="signup-screenshots" aria-label="Signup form guide">
+          <img src="{% static 'assest/screenshots/image.png' %}" alt="SnipAlert signup form" />
+          <img src="{% static 'assest/screenshots/Screenshot 2026-08-22 214601.png' %}" alt="Select Customer or Shopkeeper during signup" />
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

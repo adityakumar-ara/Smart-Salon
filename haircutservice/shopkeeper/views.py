@@ -6,6 +6,11 @@ from .models import Salon, SalonImage, SalonService, QueueEntry, SiderImage, Sal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from webpush import send_user_notification
+from django.conf import settings
+from django.core.mail import send_mail
+from django.utils import timezone
+import random
+import time
 
 
 def _haversine_km(lat1, lon1, lat2, lon2):
@@ -32,7 +37,7 @@ def nearby_salons_api(request):
     except ValueError:
         return JsonResponse({'error': 'Invalid coordinates.'}, status=400)
 
-    salons = Salon.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True)
+    salons = Salon.objects.filter(is_active=True).exclude(latitude__isnull=True).exclude(longitude__isnull=True)
     nearby = []
     for salon in salons:
         distance = _haversine_km(lat, lng, salon.latitude, salon.longitude)
@@ -50,8 +55,8 @@ def nearby_salons_api(request):
 @login_required(login_url='login')
 def opensalon(request):
 
-    existing_by_owner = Salon.objects.filter(owner=request.user).exists()
-    existing_by_email = Salon.objects.filter(owner__email=request.user.email).exclude(owner=request.user).exists()
+    existing_by_owner = Salon.objects.filter(owner=request.user, is_active=True).exists()
+    existing_by_email = Salon.objects.filter(owner__email=request.user.email, is_active=True).exclude(owner=request.user).exists()
     if existing_by_owner or existing_by_email:
         messages.error(request, "Salon alredy open this Email ")
         return redirect('home')
@@ -84,7 +89,7 @@ def opensalon(request):
         messages.success(request, "Salon created successfully 🎉")
         return redirect('home')
 
-    salons = Salon.objects.all()
+    salons = Salon.objects.filter(is_active=True)
 
     return render(request, 'shopkeeper/opensalon.html', {
         'salons': salons
@@ -92,10 +97,10 @@ def opensalon(request):
 
 
 def home(request):
-    all_salons = Salon.objects.all()
+    all_salons = Salon.objects.filter(is_active=True)
     has_salon = False
     if request.user.is_authenticated:
-        has_salon = Salon.objects.filter(owner=request.user).exists()
+        has_salon = Salon.objects.filter(owner=request.user, is_active=True).exists()
 
     # Improvement: Only fetch slider images that actually have an image file.
     slider_images = SiderImage.objects.exclude(image__isnull=True).exclude(image__exact='')
@@ -113,7 +118,7 @@ def home(request):
 
 
 def salon_detail_public(request, salon_id):
-    salon = get_object_or_404(Salon, id=salon_id)
+    salon = get_object_or_404(Salon, id=salon_id, is_active=True)
     services = SalonService.objects.filter(salon=salon)
     gallery_images = SalonImage.objects.filter(salon=salon)
     
@@ -181,7 +186,7 @@ from webpush import send_user_notification
 
 @login_required(login_url='login')
 def join_queue(request, service_id):
-    service = get_object_or_404(SalonService, id=service_id)
+    service = get_object_or_404(SalonService, id=service_id, salon__is_active=True)
     salon = service.salon
     salon_owner = salon.owner
     if not hasattr(request.user, 'is_customer') or not request.user.is_customer:
@@ -280,7 +285,7 @@ def my_booking(request):
 @login_required(login_url='login')
 def salon_views(request):
 
-    my_salon = Salon.objects.filter(owner=request.user).first()
+    my_salon = Salon.objects.filter(owner=request.user, is_active=True).first()
     if my_salon:
         salon_gallery = SalonImage.objects.filter(salon=my_salon)
         queue_entries = my_salon.queue_entries.filter(status__in=['waiting', 'seated']).select_related('customer', 'service')
@@ -313,9 +318,61 @@ def salon_views(request):
     }
     return render(request, 'shopkeeper/salonviews.html', context)
 
+
+@login_required(login_url='login')
+def remove_salon(request):
+    salon = get_object_or_404(Salon, owner=request.user, is_active=True)
+
+    if request.method == 'POST' and request.POST.get('action') == 'send_otp':
+        if request.POST.get('confirm_remove') != 'yes':
+            messages.error(request, 'Please confirm that you want to remove your salon.')
+            return redirect('remove_salon')
+
+        otp = str(random.randint(100000, 999999))
+        request.session['salon_removal_otp'] = otp
+        request.session['salon_removal_salon_id'] = salon.id
+        request.session['salon_removal_otp_created_at'] = time.time()
+
+        try:
+            send_mail(
+                'SnipAlert salon removal OTP',
+                f'Your OTP to remove {salon.salon_name} is: {otp}\n\nThis OTP expires in 10 minutes. If you did not request this, please ignore this email.',
+                settings.DEFAULT_FROM_EMAIL,
+                [request.user.email],
+                fail_silently=False,
+            )
+        except Exception:
+            messages.error(request, 'We could not send the OTP. Please check your email settings and try again.')
+            return redirect('remove_salon')
+
+        messages.success(request, 'An OTP has been sent to your registered email address.')
+        return render(request, 'shopkeeper/remove_salon.html', {'salon': salon, 'otp_sent': True})
+
+    if request.method == 'POST' and request.POST.get('action') == 'confirm_remove':
+        otp = (request.POST.get('otp') or '').strip()
+        otp_created_at = request.session.get('salon_removal_otp_created_at', 0)
+        valid_otp = (
+            request.session.get('salon_removal_salon_id') == salon.id
+            and otp == request.session.get('salon_removal_otp')
+            and time.time() - otp_created_at <= 600
+        )
+        if not valid_otp:
+            messages.error(request, 'Invalid or expired OTP. Please request a new one.')
+            return render(request, 'shopkeeper/remove_salon.html', {'salon': salon, 'otp_sent': True})
+
+        salon.is_active = False
+        salon.removed_at = timezone.now()
+        salon.save(update_fields=['is_active', 'removed_at'])
+        for key in ('salon_removal_otp', 'salon_removal_salon_id', 'salon_removal_otp_created_at'):
+            request.session.pop(key, None)
+        messages.success(request, 'Your salon has been removed successfully. Its data has been kept safely.')
+        return redirect('home')
+
+    return render(request, 'shopkeeper/remove_salon.html', {'salon': salon})
+
 @login_required(login_url='login')
 def edit_salon(request):
-    editsalon = Salon.objects.filter(owner=request.user).first()
+    editsalon = Salon.objects.filter(owner=request.user, is_active=True).first()
     if not editsalon:
         messages.error(request ,"You don't have any salon Plz Fisrt register salon")
         return redirect('opensalon')
@@ -398,7 +455,7 @@ def add_service(request):
        image = request.FILES.get('service_image')
        target_gender = request.POST.get('target_gender')
        
-       current_salon = Salon.objects.filter(owner=request.user).first()
+       current_salon = Salon.objects.filter(owner=request.user, is_active=True).first()
        if not current_salon:
             messages.error(request, "Pehle aapko apna Salon register karna padega!")
             return redirect('opensalon')
@@ -418,7 +475,7 @@ def add_service(request):
 @login_required(login_url='login')
 def service_views(request):
 
-    current_salon = Salon.objects.filter(owner=request.user).first()
+    current_salon = Salon.objects.filter(owner=request.user, is_active=True).first()
     if not current_salon:
          messages.error(request, 'No salon found for your account.')
          return redirect('home')
@@ -431,7 +488,7 @@ def service_views(request):
     
 @login_required(login_url='login')
 def edit_service(request, service_id):
-    service = get_object_or_404(SalonService, id=service_id, salon__owner=request.user)
+    service = get_object_or_404(SalonService, id=service_id, salon__owner=request.user, salon__is_active=True)
     
     if request.method == "POST":
         service.name = request.POST.get('service_name')
@@ -452,7 +509,7 @@ def edit_service(request, service_id):
 @login_required(login_url='login')
 def delete_service(request, service_id):
     
-    service = get_object_or_404(SalonService, id=service_id, salon__owner=request.user)
+    service = get_object_or_404(SalonService, id=service_id, salon__owner=request.user, salon__is_active=True)
     
     service.delete()
     messages.success(request, "Service deleted successfully! 🗑️")
@@ -460,7 +517,7 @@ def delete_service(request, service_id):
 
 def male_section(request):
     
-    male_service = SalonService.objects.filter(target_gender__in=['male', 'unisex'])
+    male_service = SalonService.objects.filter(salon__is_active=True, target_gender__in=['male', 'unisex'])
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
         current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
@@ -471,7 +528,7 @@ def male_section(request):
     return render(request, 'shopkeeper/maleservice.html', context)
 def female_section(request):
     
-    female_service = SalonService.objects.filter(target_gender__in=['female', 'unisex'])
+    female_service = SalonService.objects.filter(salon__is_active=True, target_gender__in=['female', 'unisex'])
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
         current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()
@@ -482,7 +539,7 @@ def female_section(request):
     return render(request, 'shopkeeper/femaleservice.html', context)
 
 def about_service_page(request,service_id):
-    service_data = get_object_or_404(SalonService, id=service_id, is_active = True)
+    service_data = get_object_or_404(SalonService, id=service_id, is_active=True, salon__is_active=True)
     current_booking = None
     if request.user.is_authenticated and hasattr(request.user, 'is_customer') and request.user.is_customer:
         current_booking = QueueEntry.objects.filter(customer=request.user, status__in=['waiting', 'seated']).select_related('service', 'salon').first()

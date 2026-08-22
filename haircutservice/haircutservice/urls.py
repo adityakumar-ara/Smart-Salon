@@ -28,11 +28,11 @@ urlpatterns = [
     path('customer/', include('customer.urls')),
     path('shopkeeper/', include('shopkeeper.urls')),
     path('webpush/', include('webpush.urls')),
-    path('services/', core_views.information_page, {'title': 'Services'}, name='services'),
+    path('help/', core_views.help_page, name='help'),
     path('contact/', core_views.information_page, {'title': 'Contact'}, name='contact'),
-    path('privacy-policy/', core_views.information_page, {'title': 'Privacy Policy'}, name='privacy_policy'),
-    path('terms-of-service/', core_views.information_page, {'title': 'Terms of Service'}, name='terms_of_service'),
-    path('cookie-policy/', core_views.information_page, {'title': 'Cookie Policy'}, name='cookie_policy'),
+    path('privacy-policy/', core_views.legal_page, {'document': 'privacy'}, name='privacy_policy'),
+    path('terms-of-service/', core_views.legal_page, {'document': 'terms'}, name='terms_of_service'),
+    path('cookie-policy/', core_views.legal_page, {'document': 'cookies'}, name='cookie_policy'),
 ]
 
 if settings.DEBUG:

@@ -58,6 +58,10 @@ def SignUp(request):
         role = request.POST.get('role')
         email = (request.POST.get('email') or '').strip()
 
+        if not request.POST.get('legal_acceptance'):
+            messages.error(request, 'Please accept the Terms of Service and Privacy Policy to create an account.')
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
         if not email:
             messages.error(request, 'Email is required.')
             return redirect(request.META.get('HTTP_REFERER', 'home'))
@@ -154,6 +158,10 @@ def login(request):
         email = (request.POST.get('email') or '').strip()
         password = request.POST.get('password', '')
 
+        if not request.POST.get('legal_acceptance'):
+            messages.error(request, 'Please confirm that you accept the Terms of Service and Privacy Policy.')
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+
         user = None
         if email:
             account = User.objects.filter(email__iexact=email).first()
@@ -168,10 +176,10 @@ def login(request):
             messages.error(request, "Invalid email or password. Please try again.")
             return redirect('home')
 
-    all_salons = Salon.objects.all()
+    all_salons = Salon.objects.filter(is_active=True)
     has_salon = False
     if request.user.is_authenticated:
-        has_salon = Salon.objects.filter(owner=request.user).exists()
+        has_salon = Salon.objects.filter(owner=request.user, is_active=True).exists()
 
     slider_images = SiderImage.objects.exclude(image__isnull=True).exclude(image__exact='')
     user_queue_ids = []

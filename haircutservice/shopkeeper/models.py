@@ -20,6 +20,8 @@ class Salon(models.Model):
     close_time = models.TimeField()
 
     description = models.TextField( null=True, blank= True)
+    is_active = models.BooleanField(default=True)
+    removed_at = models.DateTimeField(null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
 

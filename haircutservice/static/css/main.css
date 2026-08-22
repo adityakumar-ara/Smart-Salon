@@ -515,6 +515,337 @@ textarea:focus {
     text-shadow: 0 10px 30px rgba(15, 23, 42, 0.35);
 }
 
+.help-hero {
+    padding: 76px 24px;
+    color: #fff;
+    text-align: center;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(96, 165, 250, 0.22), transparent 27%),
+        radial-gradient(circle at 84% 88%, rgba(167, 139, 250, 0.28), transparent 30%),
+        linear-gradient(125deg, #0f172a 0%, #172554 48%, #312e81 100%);
+}
+
+.help-hero span {
+    color: #93c5fd;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+}
+
+.help-hero h1 {
+    margin: 12px 0;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+}
+
+.help-hero p {
+    margin: 0;
+    color: #dbeafe;
+    font-size: 1.08rem;
+}
+
+.help-content {
+    padding-top: 56px;
+    padding-bottom: 32px;
+}
+
+.help-card {
+    height: 100%;
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.help-card-icon,
+.removal-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+}
+
+.help-card h2 {
+    color: #172554;
+    font-size: 1.25rem;
+    font-weight: 750;
+}
+
+.help-card p {
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.help-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.removal-page {
+    display: grid;
+    min-height: 60vh;
+    place-items: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.removal-card {
+    width: min(100%, 580px);
+    padding: 38px;
+    text-align: center;
+    border: 1px solid #fecaca;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 20px 50px rgba(127, 29, 29, 0.1);
+}
+
+.removal-icon {
+    margin-right: auto;
+    margin-left: auto;
+    color: #b91c1c;
+    background: #fef2f2;
+}
+
+.removal-card h1 {
+    color: #7f1d1d;
+    font-size: clamp(1.7rem, 4vw, 2.25rem);
+    font-weight: 800;
+}
+
+.removal-card > p {
+    color: #64748b;
+    line-height: 1.65;
+}
+
+.removal-form {
+    display: grid;
+    gap: 14px;
+    margin-top: 26px;
+}
+
+.removal-form label {
+    color: #334155;
+    font-weight: 600;
+    text-align: left;
+}
+
+.removal-form input[type='text'] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 1rem;
+    text-align: center;
+    letter-spacing: 0.2em;
+}
+
+.removal-confirmation {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.account-guide {
+    padding-top: 42px;
+    padding-bottom: 72px;
+}
+
+.account-guide-intro {
+    max-width: 680px;
+    margin: 0 auto 32px;
+    text-align: center;
+}
+
+.account-guide-intro > span {
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.account-guide h2 {
+    margin: 8px 0 10px;
+    color: #172554;
+    font-size: clamp(1.8rem, 3vw, 2.45rem);
+    font-weight: 800;
+}
+
+.account-guide-intro p {
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.account-role-card {
+    height: 100%;
+    padding: 30px;
+    border: 1px solid #dbeafe;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
+}
+
+.account-role-card-shopkeeper {
+    border-color: #ddd6fe;
+    background: linear-gradient(180deg, #ffffff 0%, #faf9ff 100%);
+}
+
+.account-role-card h3 {
+    color: #172554;
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.account-role-card ol {
+    padding-left: 1.2rem;
+    color: #475569;
+    line-height: 1.75;
+}
+
+.account-role-note {
+    color: #64748b;
+    font-size: 0.93rem;
+    line-height: 1.65;
+}
+
+.signup-screenshots {
+    position: relative;
+    display: grid;
+    height: 100%;
+    min-height: 390px;
+    place-items: center;
+    padding: 24px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #172554, #312e81);
+    box-shadow: 0 20px 45px rgba(30, 41, 59, 0.2);
+}
+
+.signup-screenshots img {
+    position: absolute;
+    width: 62%;
+    border: 3px solid rgba(255, 255, 255, 0.88);
+    border-radius: 12px;
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.35);
+}
+
+.signup-screenshots img:first-child {
+    top: 28px;
+    left: 20px;
+    transform: rotate(-4deg);
+}
+
+.signup-screenshots img:last-child {
+    right: 18px;
+    bottom: 28px;
+    transform: rotate(4deg);
+}
+
+.legal-hero {
+    padding: 70px 24px;
+    color: #fff;
+    text-align: center;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(96, 165, 250, 0.2), transparent 27%),
+        radial-gradient(circle at 85% 90%, rgba(167, 139, 250, 0.26), transparent 30%),
+        linear-gradient(125deg, #0f172a 0%, #172554 48%, #312e81 100%);
+}
+
+.legal-hero span {
+    color: #93c5fd;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+}
+
+.legal-hero h1 {
+    margin: 10px 0;
+    color: #fff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.35rem, 5vw, 4rem);
+}
+
+.legal-hero p {
+    margin: 0;
+    color: #dbeafe;
+}
+
+.legal-content {
+    max-width: 900px;
+    padding-top: 56px;
+    padding-bottom: 70px;
+}
+
+.legal-intro {
+    margin-bottom: 28px;
+    padding: 22px 24px;
+    border-left: 4px solid var(--primary);
+    border-radius: 0 14px 14px 0;
+    color: #334155;
+    line-height: 1.75;
+    background: #eff6ff;
+}
+
+.legal-content section {
+    margin-bottom: 18px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.legal-content h2 {
+    margin-bottom: 12px;
+    color: #172554;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.legal-content p {
+    margin-bottom: 0;
+    color: #475569;
+    line-height: 1.75;
+}
+
+.legal-content p + p {
+    margin-top: 12px;
+}
+
+.legal-content a {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.legal-consent {
+    color: #475569;
+    font-size: 0.83rem;
+    line-height: 1.45;
+}
+
+.legal-consent .form-check-input {
+    margin-top: 0.22rem;
+}
+
+.legal-consent a {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+@media (max-width: 576px) {
+    .signup-screenshots {
+        min-height: 330px;
+    }
+}
+
  .chatbot-fab {
     position: fixed;
     right: 20px;
