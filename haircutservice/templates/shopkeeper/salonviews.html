@@ -4,8 +4,8 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/salondetail.css' %}" />
+  {% webpush_header %}
 {% endblock %}
-{% webpush_header %}
 {% block content %}
   <div class="container mt-4">
     {% if salon %}
