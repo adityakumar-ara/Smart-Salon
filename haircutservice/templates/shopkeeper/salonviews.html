@@ -1,227 +1,253 @@
 {% extends 'main.html' %}
+{% load webpush_notifications %}
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/salondetail.css' %}">
+  <link rel="stylesheet" href="{% static 'css/salondetail.css' %}" />
 {% endblock %}
-
+{% webpush_header %}
 {% block content %}
-<div class="container mt-4">
+  <div class="container mt-4">
     {% if salon %}
-    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
-        aria-label="breadcrumb">
+      <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'profile' %}">Profile </a></li>
-            <li class="breadcrumb-item active" aria-current="page">Salon Details </li>
+          <li class="breadcrumb-item">
+            <a href="{% url 'profile' %}">Profile</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Salon Details</li>
         </ol>
-    </nav>
-    <div class="card shadow-lg p-4 border-0 rounded-4 mb-5 bg-white">
+      </nav>
+      <div class="card shadow-lg p-4 border-0 rounded-4 mb-5 bg-white">
         <div class="d-flex flex-column flex-md-row align-items-center mb-4">
-            {% if salon.owner.image %}
-            <img src="{{ salon.owner.image.url }}"
-                class="rounded-circle mb-3 mb-md-0 me-md-4 border border-2 border-primary shadow-sm"
-                style="width: 130px; height: 130px; object-fit: cover;" alt="Profile Image">
-            {% else %}
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                class="rounded-circle mb-3 mb-md-0 me-md-4 border border-2 border-secondary shadow-sm"
-                style="width: 130px; height: 130px; object-fit: cover;" alt="Default Profile Image">
-            {% endif %}
+          {% if salon.owner.image %}
+            <img src="{{ salon.owner.image.url }}" class="rounded-circle mb-3 mb-md-0 me-md-4 border border-2 border-primary shadow-sm" style="width: 130px; height: 130px; object-fit: cover;" alt="Profile Image" />
+          {% else %}
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="rounded-circle mb-3 mb-md-0 me-md-4 border border-2 border-secondary shadow-sm" style="width: 130px; height: 130px; object-fit: cover;" alt="Default Profile Image" />
+          {% endif %}
 
-            <div>
-                <h2 class="fw-bold text-dark mb-1">{{ salon.salon_name }}</h2>
-                <p class="text-muted mb-0 d-flex align-items-center gap-2">
-                    <i class="fas fa-map-marker-alt me-2 text-danger"></i>
-                    <strong>Location:</strong>
-                    <span>{{ salon.location_text }}</span>
-                    {% if salon.location_map_url %}
-                    <a href="{{ salon.location_map_url }}" target="_blank" class="text-decoration-none text-info">
-                        View on map
-                    </a>
-                    {% endif %}
-                </p>
-            </div>
+          <div>
+            <h2 class="fw-bold text-dark mb-1">{{ salon.salon_name }}</h2>
+            <p class="text-muted mb-0 d-flex align-items-center gap-2">
+              <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+              <strong>Location:</strong>
+              <span>{{ salon.location_text }}</span>
+              {% if salon.location_map_url %}
+                <a href="{{ salon.location_map_url }}" target="_blank" class="text-decoration-none text-info">View on map</a>
+              {% endif %}
+            </p>
+          </div>
         </div>
 
         <div class="row g-3 fs-5 text-secondary border-top pt-3">
-            <div class="col-12 col-md-6"><strong>Owner Name:</strong> {{ salon.owner_name }}</div>
-            <div class="col-12 col-md-6"><strong>Mobile:</strong> {{ salon.owner.mobile }}</div>
-            <div class="col-12 col-md-6"><strong>Opening Time:</strong> {{ salon.open_time }}</div>
-            <div class="col-12 col-md-6"><strong>Closing Time:</strong> {{ salon.close_time }}</div>
-            <div class="col-12 shadow-sm p-3 bg-light rounded-3 mt-3">
-                <strong>About Salon:</strong> <br>
-                <span class="fs-6">{{ salon.description }}</span>
-            </div>
+          <div class="col-12 col-md-6">
+            <strong>Owner Name:</strong> {{ salon.owner_name }}
+          </div>
+          <div class="col-12 col-md-6">
+            <strong>Mobile:</strong> {{ salon.owner.mobile }}
+          </div>
+          <div class="col-12 col-md-6">
+            <strong>Opening Time:</strong> {{ salon.open_time }}
+          </div>
+          <div class="col-12 col-md-6">
+            <strong>Closing Time:</strong> {{ salon.close_time }}
+          </div>
+          <div class="col-12 shadow-sm p-3 bg-light rounded-3 mt-3">
+            <strong>About Salon:</strong> <br />
+            <span class="fs-6">{{ salon.description }}</span>
+          </div>
         </div>
 
         <div class="card shadow-sm border border-secondary rounded-4 p-4 mt-4 bg-white">
-            <h3 class="fw-bold text-dark mb-4">Current Queue</h3>
-            {% if queue_entries %}
+          <h3 class="fw-bold text-dark mb-4">Current Queue</h3>
+          {% if queue_entries %}
             <div class="table-responsive">
-                <table class="table table-bordered align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Customer</th>
-                            <th>Service</th>
-                            <th>Queue no.</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for entry in queue_entries %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>
-                                {{ entry.customer.username }}
-                                {% if entry.is_new %}<span class="badge bg-info ms-1">New</span>{% endif %}
-                            </td>
-                            <td>{% if entry.service %}{{ entry.service.name }}{% else %}General{% endif %}</td>
-                            <td>{% if entry.status == 'waiting' %}{{ entry.position }}{% else %}—{% endif %}</td>
-                            <td>
-                                {% if entry.status == 'waiting' %}
-                                <span class="badge bg-warning text-dark">Waiting</span>
-                                {% else %}
-                                <span class="badge bg-success">Accepted / Seated</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if entry.status == 'waiting' %}
-                                <form method="post" action="{% url 'accept_order' entry.id %}" class="d-inline">
-                                    {% csrf_token %}<button type="submit" class="btn btn-success btn-sm me-1">Accept</button>
-                                </form>
-                                <form method="post" action="{% url 'cancel_order' entry.id %}" class="d-inline" onsubmit="return confirm('Reject this booking?');">
-                                    {% csrf_token %}<button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
-                                </form>
-                                {% elif entry.status == 'seated' %}
-                                <form method="post" action="{% url 'complete_order' entry.id %}" class="d-inline">
-                                    {% csrf_token %}<button type="submit" class="btn btn-primary btn-sm me-1">Complete</button>
-                                </form>
-                                <form method="post" action="{% url 'cancel_order' entry.id %}" class="d-inline" onsubmit="return confirm('Reject this accepted booking?');">
-                                    {% csrf_token %}<button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
-                                </form>
-                                {% else %}
-                                <span class="text-muted">No actions</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+              <table class="table table-bordered align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Queue no.</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for entry in queue_entries %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>
+                        {{ entry.customer.username }}
+                        {% if entry.is_new %}
+                          <span class="badge bg-info ms-1">New</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if entry.service %}
+                          {{ entry.service.name }}
+                        {% else %}
+                          General
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if entry.status == 'waiting' %}
+                          {{ entry.position }}
+                        {% else %}
+                          —
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if entry.status == 'waiting' %}
+                          <span class="badge bg-warning text-dark">Waiting</span>
+                        {% else %}
+                          <span class="badge bg-success">Accepted / Seated</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if entry.status == 'waiting' %}
+                          <form method="post" action="{% url 'accept_order' entry.id %}" class="d-inline">
+                            {% csrf_token %}<button type="submit" class="btn btn-success btn-sm me-1">Accept</button>
+                          </form>
+                          <form method="post" action="{% url 'cancel_order' entry.id %}" class="d-inline" onsubmit="return confirm('Reject this booking?');">
+                            {% csrf_token %}<button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                          </form>
+                        {% elif entry.status == 'seated' %}
+                          <form method="post" action="{% url 'complete_order' entry.id %}" class="d-inline">
+                            {% csrf_token %}<button type="submit" class="btn btn-primary btn-sm me-1">Complete</button>
+                          </form>
+                          <form method="post" action="{% url 'cancel_order' entry.id %}" class="d-inline" onsubmit="return confirm('Reject this accepted booking?');">
+                            {% csrf_token %}<button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                          </form>
+                        {% else %}
+                          <span class="text-muted">No actions</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-            {% else %}
-            <div class="text-center py-4 text-muted">
-                No active bookings yet. Customers can book a sit from the service pages.
-            </div>
-            {% endif %}
+          {% else %}
+            <div class="text-center py-4 text-muted">No active bookings yet. Customers can book a sit from the service pages.</div>
+          {% endif %}
         </div>
 
         <div class="mt-4 text-end d-flex flex-column flex-md-row justify-content-end gap-2">
-            <a href="{% url 'edit_salon' %}" role="button"
-                class="btn btn-lg px-4 py-2 text-white fw-bold shadow-sm rounded-3"
-                style="background: linear-gradient(90deg, #0f23fa 0%, #0e8684 100%); transition: transform 0.2s;">
-                <i class="bi bi-pencil-square me-2"></i>Update Salon
-            </a>
-            {% if salon.location_map_url %}
-            <a href="{{ salon.location_map_url }}" target="_blank" role="button"
-                class="btn btn-lg px-4 py-2 btn-outline-primary fw-bold shadow-sm rounded-3">
-                <i class="bi bi-geo-alt me-2"></i>View {{ salon.salon_name }} on Map
-            </a>
-            {% endif %}
+          <a href="{% url 'edit_salon' %}" role="button" class="btn btn-lg px-4 py-2 text-white fw-bold shadow-sm rounded-3" style="background: linear-gradient(90deg, #0f23fa 0%, #0e8684 100%); transition: transform 0.2s;"><i class="bi bi-pencil-square me-2"></i>Update Salon</a>
+          {% if salon.location_map_url %}
+            <a href="{{ salon.location_map_url }}" target="_blank" role="button" class="btn btn-lg px-4 py-2 btn-outline-primary fw-bold shadow-sm rounded-3"><i class="bi bi-geo-alt me-2"></i>View {{ salon.salon_name }} on Map</a>
+          {% endif %}
         </div>
-    </div>
+      </div>
 
-    <section class="owner-feedback-panel mb-5" aria-labelledby="owner-feedback-heading">
+      <section class="owner-feedback-panel mb-5" aria-labelledby="owner-feedback-heading">
         <div class="feedback-heading">
-            <div>
-                <span class="section-kicker">Your reputation</span>
-                <h3 id="owner-feedback-heading">Customer feedback</h3>
-                <p>See what customers are saying about {{ salon.salon_name }}.</p>
-            </div>
-            <div class="feedback-score">
-                <i class="bi bi-star-fill"></i>
-                <strong>{% if average_rating %}{{ average_rating }}{% else %}—{% endif %}</strong>
-                <span>{{ feedback_count }} review{{ feedback_count|pluralize }}</span>
-            </div>
+          <div>
+            <span class="section-kicker">Your reputation</span>
+            <h3 id="owner-feedback-heading">Customer feedback</h3>
+            <p>See what customers are saying about {{ salon.salon_name }}.</p>
+          </div>
+          <div class="feedback-score">
+            <i class="bi bi-star-fill"></i>
+            <strong>
+              {% if average_rating %}
+                {{ average_rating }}
+              {% else %}
+                —
+              {% endif %}
+            </strong>
+            <span>{{ feedback_count }} review{{ feedback_count|pluralize }}</span>
+          </div>
         </div>
         <div class="feedback-list">
-            {% for feedback in feedbacks %}
+          {% for feedback in feedbacks %}
             <article class="feedback-card">
-                <div class="feedback-avatar">{{ feedback.customer.username|first|upper }}</div>
-                <div class="feedback-content">
-                    <div class="feedback-meta"><strong>{{ feedback.customer.name|default:feedback.customer.username }}</strong><time>{{ feedback.created_at|date:"d M Y" }}</time></div>
-                    <div class="feedback-stars">{% for star in "12345" %}<i class="bi {% if forloop.counter <= feedback.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>{% endfor %}</div>
-                    {% if feedback.comment %}<p>{{ feedback.comment }}</p>{% endif %}
+              <div class="feedback-avatar">{{ feedback.customer.username|first|upper }}</div>
+              <div class="feedback-content">
+                <div class="feedback-meta">
+                  <strong>{{ feedback.customer.name|default:feedback.customer.username }}</strong><time>{{ feedback.created_at|date:'d M Y' }}</time>
                 </div>
-            </article>
-            {% empty %}
-            <div class="feedback-empty"><i class="bi bi-stars"></i><p>Your salon has not received feedback yet.</p></div>
-            {% endfor %}
-        </div>
-    </section>
+                <div class="feedback-stars">
+                  {% for star in rating_stars %}
+                    <i class="bi {% if forloop.counter <= feedback.rating %}
+                        bi-star-fill
+                      {% else %}
+                        bi-star
+                      {% endif %}">
 
-    <div class="card shadow p-4 bg-white border-0 rounded-4">
+                    </i>
+                  {% endfor %}
+                </div>
+                {% if feedback.comment %}
+                  <p>{{ feedback.comment }}</p>
+                {% endif %}
+              </div>
+            </article>
+          {% empty %}
+            <div class="feedback-empty">
+              <i class="bi bi-stars"></i>
+              <p>Your salon has not received feedback yet.</p>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <div class="card shadow p-4 bg-white border-0 rounded-4">
         <h2 class="text-center mb-5 fw-bold text-dark">{{ salon.salon_name }} - Gallery</h2>
 
         {% for photo in saved_gallery %}
-        <div class="row justify-content-center align-items-center g-5 mb-5 pb-4 border-bottom">
-
+          <div class="row justify-content-center align-items-center g-5 mb-5 pb-4 border-bottom">
             {% if forloop.counter|divisibleby:2 %}
-            <div class="col-12 col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="p-3">
-                    <h4 class="text-primary fw-bold mb-3">Speciality #{{ forloop.counter }}</h4>
-                    <p class="text-secondary lead fs-5" style="line-height: 1.8;">
-                        {{ photo.description }}
-                    </p>
+                  <h4 class="text-primary fw-bold mb-3">Speciality #{{ forloop.counter }}</h4>
+                  <p class="text-secondary lead fs-5" style="line-height: 1.8;">{{ photo.description }}</p>
                 </div>
-            </div>
+              </div>
 
-            <div class="col-12 col-md-4 d-flex justify-content-center">
+              <div class="col-12 col-md-4 d-flex justify-content-center">
                 <div class="shadow-sm rounded-4 overflow-hidden border" style="width: 280px; height: 280px;">
-                    <img src="{{ photo.image.url }}" alt="Salon Service" class="w-100 h-100"
-                        style="object-fit: cover;" />
+                  <img src="{{ photo.image.url }}" alt="Salon Service" class="w-100 h-100" style="object-fit: cover;" />
                 </div>
-            </div>
+              </div>
             {% else %}
-            <div class="col-12 col-md-4 d-flex justify-content-center">
+              <div class="col-12 col-md-4 d-flex justify-content-center">
                 <div class="shadow-sm rounded-4 overflow-hidden border" style="width: 280px; height: 280px;">
-                    <img src="{{ photo.image.url }}" alt="Salon Service" class="w-100 h-100"
-                        style="object-fit: cover;" />
+                  <img src="{{ photo.image.url }}" alt="Salon Service" class="w-100 h-100" style="object-fit: cover;" />
                 </div>
-            </div>
+              </div>
 
-            <div class="col-12 col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="p-3">
-                    <h4 class="text-primary fw-bold mb-3">Speciality #{{ forloop.counter }}</h4>
-                    <p class="text-secondary lead fs-5" style="line-height: 1.8;">
-                        {{ photo.description }}
-                    </p>
+                  <h4 class="text-primary fw-bold mb-3">Speciality #{{ forloop.counter }}</h4>
+                  <p class="text-secondary lead fs-5" style="line-height: 1.8;">{{ photo.description }}</p>
                 </div>
-            </div>
+              </div>
             {% endif %}
-
-        </div>
         {% empty %}
-        <div class="text-center my-5 py-5">
+          <div class="text-center my-5 py-5">
             <div class="text-muted fs-5">
-                <i class="bi bi-images d-block display-5 mb-3 text-secondary"></i>
-                No gallery photos available for this salon yet.
+              <i class="bi bi-images d-block display-5 mb-3 text-secondary"></i>
+              No gallery photos available for this salon yet.
             </div>
-        </div>
+          </div>
         {% endfor %}
-    </div>
-
+      </div>
     {% else %}
-    <div class="card shadow border-0 p-5 text-center mt-5 bg-white rounded-4">
+      <div class="card shadow border-0 p-5 text-center mt-5 bg-white rounded-4">
         <i class="bi bi-shop display-1 text-warning mb-4"></i>
         <h3 class="text-secondary fw-bold">Aapne abhi tak koi Salon open nahi kiya hai!</h3>
         <p class="text-muted fs-5">Apni dukan ko digital banayein aur aaj hi register karein.</p>
         <div class="mt-3">
-            <a href="{% url 'opensalon' %}" class="btn btn-success btn-lg px-5 py-2 shadow-sm rounded-3">Open Salon
-                Now</a>
+          <a href="{% url 'opensalon' %}" class="btn btn-success btn-lg px-5 py-2 shadow-sm rounded-3">Open Salon Now</a>
         </div>
-    </div>
+      </div>
     {% endif %}
-</div>
-
+    {% if user.is_authenticated and user.is_shopkeeper and has_salon %}
+      <aside class="push-notification-control" aria-label="Booking alert settings" style="position: fixed; left: 22px; bottom: 24px; z-index: 1001; display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px 8px 14px; border: 2px solid #2563eb; border-radius: 999px; background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); box-shadow: 0 14px 32px rgba(37, 99, 235, 0.2);">
+        <span class="push-notification-label"><i class="bi bi-bell-fill" aria-hidden="true"></i> Booking alerts</span>
+        {% webpush_button with_class='btn btn-outline-primary' %}
+      </aside>
+    {% endif %}
+  </div>
 {% endblock %}

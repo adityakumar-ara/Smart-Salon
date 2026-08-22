@@ -309,6 +309,7 @@ def salon_views(request):
         'feedbacks': feedbacks,
         'feedback_count': feedback_count,
         'average_rating': average_rating,
+        'rating_stars': range(1, 6),
     }
     return render(request, 'shopkeeper/salonviews.html', context)
 

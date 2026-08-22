@@ -189,7 +189,7 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
-# यह लाइन Django को बताएगी कि फाइल लोकल में नहीं, Cloudinary पर सेव करनी है
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Display SnipAlert's branded page instead of Django's default CSRF error screen.
